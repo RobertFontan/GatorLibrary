@@ -19,6 +19,7 @@ function NavBar(){
             <NavLink className={splitLocation[1].indexOf("watching") != -1 ? "active" : ""} to="/watching">WATCHING</NavLink>
             <NavLink className={splitLocation[1] === "notes" ? "active" : ""} to="/notes">NOTES</NavLink>
             <NavLink className={splitLocation[1] === "saved" ? "active" : ""} to="/saved">SAVED VIDEOS</NavLink>
+            <NavLink className={splitLocation[1] === "profile" ? "active" : ""} to="/profile">PROFILE</NavLink>
         </Navbar>
     )
 
