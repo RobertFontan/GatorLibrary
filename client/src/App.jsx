@@ -9,6 +9,7 @@ import Home from './routes/Home'
 import Notes from './routes/Notes'
 import Saved from './routes/Saved'
 import Watching from './routes/Watching'
+import Login from './routes/Login'
 
 import NavBar from "./components/Navbar";
 
@@ -27,7 +28,8 @@ function App() {
             </Col>
             <Col className="content">
               <Routes>
-                   <Route path="/" element={<Home />}/>
+                  <Route path="/" element={<Login />}/>
+                   {/* <Route path="/" element={<Home />}/> */}
                    <Route path="/watching" element={<Watching />}/>
                    <Route path="/watching/:course/:videoID" element={<Watching />}/>
                    <Route path="/notes" element={<Notes />}/>
