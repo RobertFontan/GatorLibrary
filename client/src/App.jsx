@@ -4,7 +4,7 @@ import './App.css'
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import Login from "./routes/Login";
 import Home from './routes/Home'
 import Notes from './routes/Notes'
 import Saved from './routes/Saved'
@@ -22,12 +22,14 @@ function App() {
       <Container fluid className="app-container">
         {/* <div className='App'> */}
           <Row className="App">
-            <Col lg={2} className="navbar-col">
+            {/* <Col lg={2} className="navbar-col">
               <NavBar />
-            </Col>
+            </Col> */}
             <Col className="content">
               <Routes>
-                   <Route path="/" element={<Home />}/>
+                    <Route path="/" element={<Login />}/>
+                {/* temp */}
+                   {/* <Route path="/" element={<Home />}/> */}
                    <Route path="/watching" element={<Watching />}/>
                    <Route path="/watching/:course/:videoID" element={<Watching />}/>
                    <Route path="/notes" element={<Notes />}/>
