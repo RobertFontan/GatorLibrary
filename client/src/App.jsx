@@ -9,9 +9,9 @@ import Home from './routes/Home'
 import Notes from './routes/Notes'
 import Saved from './routes/Saved'
 import Watching from './routes/Watching'
-import Login from './routes/Login'
-
 import NavBar from "./components/Navbar";
+import SignUp from './routes/SignUp'; 
+
 
 import { Container, Row, Col, Nav } from 'react-bootstrap'
 
@@ -28,12 +28,8 @@ function App() {
             </Col> */}
             <Col className="content">
               <Routes>
-<<<<<<< HEAD
-                  <Route path="/" element={<Login />}/>
-=======
-                    <Route path="/" element={<Login />}/>
-                {/* temp */}
->>>>>>> rob
+                 <Route path="/" element={<Login/>}/>
+                 <Route path="/signup" element={<SignUp />}/>
                    {/* <Route path="/" element={<Home />}/> */}
                    <Route path="/watching" element={<Watching />}/>
                    <Route path="/watching/:course/:videoID" element={<Watching />}/>

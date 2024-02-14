@@ -1,12 +1,15 @@
 import { React, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import './Login.css'
 
 import { Auth } from '@supabase/auth-ui-react'
 import supabase from '../config/supabaseClient';
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 
 function Login() {
+  
 
+ 
   const [session, setSession] = useState(null)
 
   useEffect(() => {
@@ -22,21 +25,44 @@ function Login() {
 
     return () => subscription.unsubscribe()
   }, [])
-
+  
 
   if (!session) {
     return (
-      <div>
-
+      <div className='LoginContainerStyling'>
+        <h1 className='LoginTitleStyling'> Gator Library</h1>
         <Auth
-          supabaseClient={supabase}
+          supabaseClient={supabase}   
+          showLinks={false}       
           appearance={{
             style: {
-              container: {margin: '20px'},
+              input:{
+                width: '500px', marginTop: '0px', fontFamily: 'Sarabun', border:'3px solid black', background: 'white'
+              },
+              button: {
+                backgroundColor: 'black', color: 'white', borderRadius:'20px', 
+                maxWidth:'250px', padding: '10px 20px', display: 'flex', alignItems: 'center',
+                justifyContent:'center', margin: '20px auto'},
+        
             },
           }}
-          providers={['google', 'twitter']}
+          localization={{
+            variables: {
+              sign_in: {
+                button_label: 'Log In',
+                email_label: ' ',
+                email_input_placeholder:'Username',
+                password_label: ' ',
+                password_input_placeholder: 'Password'
+
+              }
+            }
+          }}  
+          providers={[]}
         />
+        <div style={{ marginTop: "0px", textDecoration: 'underline' }}>
+           <Link to="/signup">Don't have an account? Sign up</Link>
+        </div>
       </div>
       
       )
