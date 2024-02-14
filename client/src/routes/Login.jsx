@@ -1,63 +1,154 @@
 import { React, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { Auth } from '@supabase/auth-ui-react'
 import supabase from '../config/supabaseClient';
-import { ThemeSupa } from '@supabase/auth-ui-shared'
+import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
 
-  const [session, setSession] = useState(null)
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
+  
+  const navigate = useNavigate();
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    console.log('SIGN UP IS CALLED')
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName
+          // tables: 
+          // insert relevant information here
+
+        }
+      }
+    });
+
+    if (error) {
+      console.log('error called', error)
+      return;
+    }
+    if (data) {
+      console.log('SIGN UP IS SUCCESSFUL USER IS CALLED', user)
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert([{ id: user.id, full_name: fullName }])
+
+      if (error) {
+        console.log(error);
+        return;
+      }
+      console.log('data', data)
+    }
+
+  }
+
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     })
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
 
-    return () => subscription.unsubscribe()
-  }, [])
+    if (error) {
+      console.log('error called', error)
+      return;
+    }
+    
+    if (data){
+      console.log('login successfull redirect to home', data)
+      navigate('/home')
+
+    }
 
 
-  if (!session) {
+  }
+
+  const [isSignup, setIsSignup] = useState(false)
+
+  const renderSignup = () => {
     return (
-      <div>
+      <form style={{ margin: '20px', textAlign: 'center',  }} onSubmit={handleSignup}>
+        <h1>Sign Up</h1>
+        <div>
+          <label htmlFor="first-name">Full Name</label>
+          <input
+            type="text"
+            id="full-name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <Button  type="submit">Sign Up</Button>
+      </form>
+    )
+  }
 
-        <Auth
-          supabaseClient={supabase}
-          appearance={{
-            style: {
-              container: {margin: '20px'},
-            },
-          }}
-          providers={['google', 'twitter']}
+  const renderLogin = () => {
+    return (
+      <form style={{margin: '20px', textAlign: 'center'}} onSubmit={handleLogin}>
+        <h1>Login</h1>
+        <label htmlFor="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
-      </div>
-      
-      )
+        <label htmlFor="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <Button type="submit">Login</Button>
+      </form>
+    )
   }
-  else {
-    return (<div>Logged in!</div>)
-  }
 
-  // return (
-  //   <div>
-  //     <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} className='login-form'>
-  //       <h3>SwampStream</h3>
-  //       <input type="text" placeholder='Username' />
-  //       <input type="text" placeholder='Password' />
+  // /const toggleSignup = () => {setIsSignup(!isSignup)}
 
+  return (
+    <>
+      {isSignup ? renderSignup() : renderLogin()}
 
-  //       <Link to="/home">Sign In</Link>
-  //     </form>
+      <Button onClick={() => setIsSignup(!isSignup)}>{isSignup ? 'Go to Log In' : 'Go to Sign Up'}</Button>
 
-  //   </div>
-  // )
+      {/* <Button onClick={() => setIsSignup(!isSignup)}>{isSignup ? 'Go to Log In' : 'Go to Sign Up'}</Button>
+      {isSignup ? renderSignup() : renderLogin()} */}
+    </>
+  );
 }
 
 export default Login
