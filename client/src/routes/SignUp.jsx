@@ -5,51 +5,52 @@ import supabase from '../config/supabaseClient';
 const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [fullName, setFullName] = useState('');
 
     const handleSignUp = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        const { user, error: signUpError } = await supabase.auth.signUp({ email, password });
-        
-        if (signUpError) {
-            setError(signUpError.message);
-            setLoading(false);
-        } else {
-            // rename 'profiles' to whatever the supabase table is called
-            const { error: profileError } = await supabase
-                .from('profiles')
-                .insert([
-                    { id: user.id, first_name: firstName, last_name: lastName },
-                ]);
-            
-            if (profileError) {
-                setError(profileError.message);
-            } else {
-                setError('');
-                // Redirect or show success message
+        console.log('SIGN UP IS CALLED')
+    
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName
+              // tables: 
+              // insert relevant information here
+    
             }
-            setLoading(false);
+          }
+        });
+    
+        if (error) {
+          console.log('error called', error)
+          return;
         }
-    };
+        if (data) {
+          console.log('SIGN UP IS SUCCESSFUL USER IS CALLED', user)
+          const { data, error } = await supabase
+            .from('profiles')
+            .insert([{ id: user.id, full_name: fullName }])
+    
+          if (error) {
+            console.log(error);
+            return;
+          }
+          console.log('data', data)
+        }
+    
+      }
 
     return (
         <div>
             <form onSubmit={handleSignUp}>
                 <input
                     type="text"
-                    placeholder="First Name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="Last Name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Full Name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                 />
                 <input
                     type="email"
