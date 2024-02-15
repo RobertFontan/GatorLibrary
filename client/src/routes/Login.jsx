@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Login.css'
 
 import { Auth } from '@supabase/auth-ui-react'
@@ -12,19 +12,28 @@ function Login() {
  
   const [session, setSession] = useState(null)
 
+  const navigate = useNavigate(); // Initialize useNavigate
+
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
+      if(session){
+        navigate('/home')
+      }
     })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
+      if(session){
+        navigate('/home')
+      } 
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [navigate])
   
 
   if (!session) {
@@ -68,7 +77,8 @@ function Login() {
       )
   }
   else {
-    return (<div>Logged in!</div>)
+
+    return (<div>Loading...</div>)
   }
 
   // return (
