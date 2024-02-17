@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import supabase from '../config/supabaseClient';
 import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -13,22 +15,24 @@ const SignUp = () => {
   const [major, setMajor] = useState('');
   const [linkedin, setLinkedin] = useState('');
 
+  const navigate = useNavigate();
+
   const handleSignUp = async (e) => {
     e.preventDefault();
     console.log('SIGN UP IS CALLED')
 
-    const { data, error } = await supabase.auth.signUp({
+    const { user, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
+        // this is where user information is put in user auth table NOT profiles table
         data: {
           full_name: fullName,
           student_type: studentType,
           year: gradYear,
           major: major,
           linkedin: linkedin,
-          // tables: 
-          // insert relevant information here
+         
 
         }
       }
@@ -38,16 +42,24 @@ const SignUp = () => {
       console.error('error called', error)
       return;
     }
-    if (data) {
-      console.log('SIGN UP IS SUCCESSFUL USER IS CALLED', data)
+
+    // if user is signed up, insert user into profiles table for management
+    if (user) {
       const { data, error } = await supabase
         .from('profiles')
         .insert([{ id: user.id, full_name: fullName, student_type: studentType, year: gradYear, major: major, linkedin: linkedin}])
+
+
+      if(data)  {
+        navigate('/home')
+      }
 
       if (error) {
         console.error(error);
         return;
       }
+
+
       console.log('data', data)
     }
 

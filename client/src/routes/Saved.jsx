@@ -5,16 +5,20 @@ import {Button, Dropdown } from 'react-bootstrap'
 import Video from '../components/Video'
 import supabase from '../config/supabaseClient'
 
+import { useSession } from '../components/SessionContext'
+
 function Saved() {
   // saved is array of videos 
   const [saved, setSaved] = useState(null)
+  const session = useSession()
 
   // get info from supabase
   useEffect(() =>{
     const fetchData = async () => {
       const {data, error} = await supabase
-      .from('Saved')
+      .from('saved')
       .select('*')
+      .eq('profile_id', session.user.id)
 
       // updates array of saved videos
       setSaved(data)
@@ -33,9 +37,10 @@ function Saved() {
     if (ascending) {
       // depening on filter
       const {data , error} = await supabase
-      .from('Saved')
+      .from('saved')
       .select('*')
       .order(filter, {ascending: true})
+      .eq('profile_id', session.user.id)
 
       if(data){
         console.log('FIL data', data)
@@ -48,9 +53,10 @@ function Saved() {
     else {
       // depening on filter
       const {data , error} = await supabase
-      .from('Saved')
+      .from('saved')
       .select('*')
       .order(filter, {ascending: false})
+      .eq('profile_id', session.user.id)
 
       if(data){
         console.log('FIL data', data)

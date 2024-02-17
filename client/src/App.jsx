@@ -36,7 +36,7 @@ const AppContent = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/watching" element={<Watching />} />
             <Route path="/watching/:course/:videoID" element={<Watching />} />
-            <Route path="/notes/:profileID" element={<Notes />} />
+            <Route path="/notes" element={<Notes />} />
             <Route path="/saved" element={<Saved />} />
           </Routes>
         </Col>
