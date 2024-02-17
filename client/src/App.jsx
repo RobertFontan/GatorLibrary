@@ -11,6 +11,7 @@ import Saved from './routes/Saved'
 import Watching from './routes/Watching'
 import NavBar from "./components/Navbar";
 import SignUp from './routes/SignUp'; 
+import StartUp from './routes/StartUp';
 
 
 import { Container, Row, Col, Nav } from 'react-bootstrap'
@@ -28,7 +29,8 @@ function App() {
             </Col> */}
             <Col className="content">
               <Routes>
-                 <Route path="/" element={<Login/>}/>
+                 <Route path="/" element={<StartUp />}/>
+                 <Route path="/login" element={<Login/>}/>
                  <Route path="/signup" element={<SignUp />}/>
                    {/* <Route path="/" element={<Home />}/> */}
                    <Route path="/watching" element={<Watching />}/>

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import supabase from '../config/supabaseClient';
 
+
 const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -37,33 +38,42 @@ const SignUp = () => {
     };
 
     return (
-        <div>
+        <div className='LoginContainerStyling'>
+            <h1 className='LoginTitleStyling'> Gator Library</h1>
             <form onSubmit={handleSignUp}>
+            <h2 style={{ fontSize: '1.3rem', textAlign: 'left', width: '100%', fontWeight:'bold' }}> Create Account</h2>
+                <div className='inputGroup'>
+                    <input 
+                        type="text"
+                        placeholder="First Name"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        style={{marginRight:'10px', borderRadius:'10px', border: '1px solid #cccccc', fontFamily: 'Sarabun'}}
+                    />
+                    <input
+                        type="text"
+                        placeholder="Last Name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        style={{marginLeft: '10px', borderRadius:'10px', border:'1px solid #cccccc', fontFamily: 'Sarabun'}}
+                    />
+                </div>   
                 <input
-                    type="text"
-                    placeholder="First Name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="Last Name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                />
-                <input
+                    className='inputFullWidth'
                     type="email"
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <input
+                    className='inputFullWidth'
                     type="password"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="submit" disabled={loading}>Sign Up</button>
+                
+                <button className='SignUpButton' type="submit" disabled={loading}>Create Account</button>
             </form>
             {error && <p>{error}</p>}
         </div>

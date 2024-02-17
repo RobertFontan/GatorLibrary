@@ -13,7 +13,7 @@
 
 .LoginTitleStyling {
     height: 100%;
-    margin: 0;
+    margin-bottom: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,7 +23,7 @@
     font-size: 95px;
 }
 .LoginContainerStyling{
-    margin-top: 200px;
+    margin-top: 100px;
     display: flex;
     flex-direction: column;
     justify-content: center; 
@@ -34,4 +34,65 @@
 .content {
     background: rgb(242,242,242);
 }
+.inputGroup{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0px 10px 0px;
+    
+}
+.inputFullWidth{
+    display: block;
+    width: 100%;
+    margin: 0px 0px 10px 0px;
+    border-radius: 10px !important;
+    border: 1px solid #cccccc !important; 
+    font-family: Sarabun
+}
+.SignUpButton{
+    background-color: black;
+    color: white;
+    border-radius: 20px; 
+    max-width: 350px;
+    padding: 10px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+    flex-grow: 1;
+    font-family: Sarabun
+}
+
+.inputFullWidth, .inputGroup input {
+    width: 100%; 
+    padding: 12px 20px; 
+    font-size: 1rem; 
+    margin-bottom: 15px; 
+}
+
+.startup-buttons {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+}
+
+.startup-buttons button {
+    margin: 10px;
+    padding: 5px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    color: black;
+    background-color: rgb(242,242,242);
+    border: 1px solid black;
+    width: 200px;
+    text-align: center;
   
+}
+
+
+
+html {
+  font-size: 22px; 
+}
+input::placeholder {
+    color: #888 !important; /* Update #888 to the color you wish */
+  }
