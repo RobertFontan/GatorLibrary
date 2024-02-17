@@ -9,19 +9,11 @@ import { ThemeSupa } from '@supabase/auth-ui-shared'
 import { useSession } from '../components/SessionContext'
 
 function Login() {
-
-
-
-  //const [session, setSession] = useState(null)
-
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
   const session = useSession()
-
-  console.log('session IN HOME', session)
 
   useEffect(() => {
     if (session) {
-      console.log('session IN USE EFFCT', session)
       navigate('/home')
     }
   }, [session])
