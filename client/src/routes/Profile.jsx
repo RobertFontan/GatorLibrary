@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import './Profile.css'
 import {Col, Nav, Row, Tab} from 'react-bootstrap';
-
+import Course from '../components/Course'
+import courses from '../data/courses'
 import Note from '../components/Note';
 
 import supabase from '../config/supabaseClient'
@@ -10,57 +11,67 @@ import supabase from '../config/supabaseClient'
 
 function Profile() {
 
-  const [notes, setNotes] = useState(null)
-
-  useEffect(() => {
-    const fetchData = async () =>{
-      
-      const { data, error } = await supabase
-      .from('Notes')
-      .select('Notes, title, videoId')
-
-
-      if(data){
-        setNotes(data)
-        console.log('NOTES', data)
-      }
-      if(error){
-        console.log('NOTES ERROR', error)
-      }
-    } 
-    fetchData()
-  
-  }, [])
-
-
+    /* would grab this info from supabase*/
+    const quizScores = [85, 92, 78];
+    const userName = "John Doe";
+    const profession = "Student";
+    const email = "john.doe@example.com";
+    const location = "Gainesville, FL";
+    const joined = "January 1, 2024";
 
   return (
     <>
    
-      <h1>Profile</h1>
+      <h2>Welcome, {userName} ...</h2>
       <div>
-      <h3>Selected Courses</h3>
+      <div className="button-spacing"></div>
+      <h4>Selected Courses</h4>
       <ul>
-        <li>Lorem ipsum dolor sit amet</li>
-        <li>Lorem ipsum dolor sit amet</li>
-        <li>Lorem ipsum dolor sit amet</li>
-        <li>Lorem ipsum dolor sit amet</li>
-      </ul>
+          {courses.map((course, index) => (
+            <li key={index}>{course.title}</li>
+          ))}
+        </ul>
     </div>
 
-    <div>
-      <h1>My Component with Buttons</h1>
 
-      {/* Button 1 with spacing */}
-      <button className="my-button" onClick={() => console.log('Button 1 clicked')}>Button 1</button>
 
-      {/* Add spacing between buttons */}
+    <div className="user-profile">
+      <img
+        className="profile-picture"
+        src="https://placekitten.com/150/150" // Replace with the URL of your profile picture
+        alt="Profile"
+      />
+      <h2 className="user-name">{userName}</h2>
+      <p className="user-bio">{profession}</p>
+      <ul className="user-details">
+        <li>Email: {email}</li>
+        <li>Location: {location}</li>
+        <li>Joined: {joined}</li>
+      </ul>
+      <div className="user-buttons">
+      <button className="button" onClick={() => console.log('Button 1 clicked')}>Edit Graduation Checklist</button>
+      <div className="button-spacing"></div>
+        <button className="button" onClick={() => console.log('Button 2 clicked')}>Video Preferences</button>
+      </div>
+    </div>
+    <div className="button-spacing"></div>
+    <h4>Previous Quizzes</h4>
+    <div className="quiz-buttons">
+        {/* Three buttons with latest quiz scores */}
+        {quizScores.map((score, index) => (
+          <button key={index} onClick={() => console.log(`Quiz ${index + 1} Score: ${score}`)}>
+            Quiz {index + 1} Score: {score}
+          </button>
+        ))}
+      </div>
+
       <div className="button-spacing"></div>
 
-      {/* Button 2 with spacing */}
-      <button className="my-button" onClick={() => console.log('Button 2 clicked')}>Button 2</button>
-    </div>
+     {/*} {courses.map(course => <Course course={course} />) */}
        
+     <div className="button-spacing"></div>
+     <div className="button-spacing"></div>
+      <h4>History</h4>
     </>
   )
 }
