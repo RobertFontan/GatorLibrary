@@ -47,9 +47,10 @@ function Transcript({videoId}) {
     console.log('going to insert into supabase', newInfo)
     const {data, error} = await supabase
     .from('notes')
-    .insert({transcript: newInfo})
+    .upsert({videoId: videoId, transcript: newInfo})
     .eq('profile_id', session.user.id)
-    .eq('videoId', videoId)
+
+
     if(data){
       console.log('update successful data inserted', data)
     }
