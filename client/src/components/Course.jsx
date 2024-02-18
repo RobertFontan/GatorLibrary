@@ -11,7 +11,7 @@ function Course({course}) {
   const [videos, setVideos] = useState(null)
 
   const API_KEY = "AIzaSyCIFWHUm93iCiFfytTQGPtu-MzyXoUrIAY"
-  const fetchURL = `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=10&playlistId=${course.playlistID}&key=${API_KEY}`
+  const fetchURL = `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=10&playlistId=${course.playlist_id}&key=${API_KEY}`
 
 
 
