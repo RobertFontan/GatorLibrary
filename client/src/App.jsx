@@ -9,6 +9,7 @@ import Home from './routes/Home'
 import Notes from './routes/Notes'
 import Saved from './routes/Saved'
 import Watching from './routes/Watching'
+import Profile from './routes/Profile'
 
 import NavBar from "./components/Navbar";
 
@@ -32,6 +33,8 @@ function App() {
                    <Route path="/watching/:course/:videoID" element={<Watching />}/>
                    <Route path="/notes" element={<Notes />}/>
                    <Route path="/saved" element={<Saved />}/>
+                   <Route path="/profile" element={<Profile />}/>
+                 
               </Routes>
             </Col>
           </Row>
