@@ -1,36 +1,53 @@
-import React from 'react'
-import { useState, useEffect } from 'react';
-import { NavLink, useLocation} from 'react-router-dom'
-import logo1 from '../logo/logo1.png';
+import React from 'react';
+import { NavLink, useLocation, Link, useNavigate } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
-import './Navbar.css'
+import { useSession } from '../components/SessionContext'
+import supabase from '../config/supabaseClient';
+import logo1 from '../logo/logo1.png';
+import './Navbar.css';
 
-function NavBar(){
-    const location = useLocation();
-    const { pathname } = location;
-    const splitLocation = pathname.split("/");
+function NavBar() {
+  const location = useLocation();
+  const { pathname } = location;
+  const splitLocation = pathname.split("/");
+  const session = useSession();
+  const navigate = useNavigate();
 
-    useEffect(() => {
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      console.log('User signed out successfully');
+      navigate('/'); 
+    } catch (error) {
+      console.error('Error signing out:', error.message);
+    }
+  };
 
-    }, [location])
-    return(
-        <Navbar className='nav'>
-            <Navbar.Brand className='brand'>
+  return (
+    <Navbar className='nav'>
+      <Navbar.Brand className='brand'>
         <img
           src={logo1}
           alt='SwampStream Logo' // Provide an alt attribute for accessibility
           className='brand-logo'
         />
-       
       </Navbar.Brand>
-            <NavLink className={splitLocation[1] === "home" ? "active" : ""} to="/"> HOME </NavLink>
-            <NavLink className={splitLocation[1].indexOf("watching") != -1 ? "active" : ""} to="/watching">WATCHING</NavLink>
-            <NavLink className={splitLocation[1] === "notes" ? "active" : ""} to="/notes">NOTES</NavLink>
-            <NavLink className={splitLocation[1] === "saved" ? "active" : ""} to="/saved">SAVED VIDEOS</NavLink>
-            <NavLink className={splitLocation[1] === "profile" ? "active" : ""} to="/profile">PROFILE</NavLink>
-        </Navbar>
-    )
 
+      <NavLink className={splitLocation[1] === "home" ? "active" : ""} to="/"> HOME </NavLink>
+      <NavLink className={splitLocation[1].indexOf("watching") !== -1 ? "active" : ""} to="/watching">WATCHING</NavLink>
+      <NavLink className={splitLocation[1] === "notes" ? "active" : ""} to="/notes">NOTES</NavLink>
+      <NavLink className={splitLocation[1] === "saved" ? "active" : ""} to="/saved">SAVED VIDEOS</NavLink>
+      <NavLink className={splitLocation[1] === "profile" ? "active" : ""} to="/profile">PROFILE</NavLink>
+
+      {session && (
+        <div className="sign-out-container">
+          <button className="sign-out-button" onClick={handleSignOut}>
+            <span className="button-text">Sign Out</span>
+          </button>
+        </div>
+      )}
+    </Navbar>
+  );
 }
 
-export default NavBar
+export default NavBar;
