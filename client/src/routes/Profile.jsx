@@ -6,74 +6,127 @@ import courses from '../data/courses'
 import Note from '../components/Note';
 
 import supabase from '../config/supabaseClient'
-
+import { useSession } from '../components/SessionContext'
 
 
 function Profile() {
+  const session = useSession()
 
-    /* would grab this info from supabase*/
-    const quizScores = [85, 92, 78];
+  const [profile, setProfile] = useState(null)
+  const [courses, setCourses] = useState(null)
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (session) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        setProfile(data);
+
+        console.log('SETPROFILE', data, session.user.id);
+
+        if (error) {
+          console.error('error', error);
+        }
+
+        const { data: coursesData, error: errorCourses } = await supabase
+          .from('courses')
+          .select('*')
+          .eq('profile_id', session.user.id);
+
+        setCourses(coursesData);
+        console.log('SETCOURSES', coursesData, session.user.id);
+
+        if (errorCourses) {
+          console.error('error', errorCourses);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [session]);
+
+  const quizScores = [85, 92, 78];
+  /*
+
+    
     const userName = "John Doe";
     const profession = "Student";
     const email = "john.doe@example.com";
     const location = "Gainesville, FL";
     const joined = "January 1, 2024";
+*/
 
-  return (
-    <>
-   
-      <h2>Welcome, {userName} ...</h2>
+
+return (
+  <div>
+  {profile ? (
+    <div>
+     <h2>Welcome, {profile.full_name} ...</h2>
       <div>
       <div className="button-spacing"></div>
       <h4>Selected Courses</h4>
       <ul>
-          {courses.map((course, index) => (
-            <li key={index}>{course.title}</li>
-          ))}
+      {courses && courses.map(course => <p key={course.id}>{course.title}</p>)}
         </ul>
     </div>
 
-
-
+    {/* User Profile */}
     <div className="user-profile">
-      <img
-        className="profile-picture"
-        src="https://placekitten.com/150/150" // Replace with the URL of your profile picture
-        alt="Profile"
-      />
-      <h2 className="user-name">{userName}</h2>
-      <p className="user-bio">{profession}</p>
-      <ul className="user-details">
-        <li>Email: {email}</li>
-        <li>Location: {location}</li>
-        <li>Joined: {joined}</li>
-      </ul>
-      <div className="user-buttons">
-      <button className="button" onClick={() => console.log('Button 1 clicked')}>Edit Graduation Checklist</button>
-      <div className="button-spacing"></div>
-        <button className="button" onClick={() => console.log('Button 2 clicked')}>Video Preferences</button>
-      </div>
-    </div>
-    <div className="button-spacing"></div>
-    <h4>Previous Quizzes</h4>
-    <div className="quiz-buttons">
-        {/* Three buttons with latest quiz scores */}
-        {quizScores.map((score, index) => (
-          <button key={index} onClick={() => console.log(`Quiz ${index + 1} Score: ${score}`)}>
-            Quiz {index + 1} Score: {score}
+        <img
+          className="profile-picture"
+          src="https://placekitten.com/150/150" // Replace with the URL of your profile picture
+          alt="Profile"
+        />
+        <h2 className="user-name">{profile.full_name}</h2>
+        <p className="user-bio">{profile.student_type}</p>
+        <ul className="user-details">
+          <li>Email: {profile.email}</li>
+          <li>Year: {profile.year}</li>
+        </ul>
+        <div className="user-buttons">
+          <button className="button" onClick={() => console.log('Button 1 clicked')}>
+            Edit Graduation Checklist
           </button>
-        ))}
+          <div className="button-spacing"></div>
+          <button className="button" onClick={() => console.log('Button 2 clicked')}>
+            Video Preferences
+          </button>
+        </div>
       </div>
 
-      <div className="button-spacing"></div>
+       {/* Previous Quizzes */}
+       <div>
+        <div className="button-spacing"></div>
+        <h4>Previous Quizzes</h4>
+        <div className="quiz-buttons">
+          {/* Three buttons with latest quiz scores */}
+          {quizScores.map((score, index) => (
+            <button key={index} onClick={() => console.log(`Quiz ${index + 1} Score: ${score}`)}>
+              Quiz {index + 1} Score: {score}
+            </button>
+          ))}
+        </div>
+      </div>
 
-     {/*} {courses.map(course => <Course course={course} />) */}
-       
-     <div className="button-spacing"></div>
-     <div className="button-spacing"></div>
-      <h4>History</h4>
-    </>
-  )
-}
+       {/* History */}
+       <div>
+        <div className="button-spacing"></div>
+        <div className="button-spacing"></div>
+        <h4>History</h4>
+        {/* Add history content here */}
+      </div>
+    
 
-export default Profile
+    </div>
+  ) : (
+    <p>Loading...</p>
+  )}
+</div>
+  );
+};
+
+export default Profile;

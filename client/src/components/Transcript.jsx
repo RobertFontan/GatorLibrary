@@ -4,25 +4,37 @@ import { Spinner } from 'react-bootstrap'
 import supabase from '../config/supabaseClient'
 
 import {Dropdown} from 'react-bootstrap'
+import { useSession } from './SessionContext'
 
 import axios from 'axios'
 function Transcript({videoId}) {
   const [transcript, setTranscript] = useState(null)
-
+  const session = useSession()
 
   const fetchTranscriptData = async () => {
     console.log('fetching transcript data')
     const options = {
       method: 'GET',
-      url: 'https://youtube-captions.p.rapidapi.com/create-transcript',
+      url: 'https://youtube-captions.p.rapidapi.com/onlycaption',
       params: {
-        videoUrl: 'https://www.youtube.com/watch?v=' + videoId
+        videoId: videoId
       },
       headers: {
         'X-RapidAPI-Key': '3bbf868d53msh78af357de335f9ap1536a6jsn20da07fcbe43',
         'X-RapidAPI-Host': 'youtube-captions.p.rapidapi.com'
       }
     };
+    // const options = {
+    //   method: 'GET',
+    //   url: 'https://youtube-captions.p.rapidapi.com/create-transcript',
+    //   params: {
+    //     videoUrl: 'https://www.youtube.com/watch?v=' + videoId
+    //   },
+    //   headers: {
+    //     'X-RapidAPI-Key': '3bbf868d53msh78af357de335f9ap1536a6jsn20da07fcbe43',
+    //     'X-RapidAPI-Host': 'youtube-captions.p.rapidapi.com'
+    //   }
+    // };
 
     const response = await axios.request(options);
     setTranscript(response.data) // text transcript
@@ -34,9 +46,11 @@ function Transcript({videoId}) {
    const insertNewTranscript = async (newInfo) => {
     console.log('going to insert into supabase', newInfo)
     const {data, error} = await supabase
-    .from('Notes')
-    .insert({videoId, transcript: newInfo})
-    //.eq('videoId', videoId)
+    .from('notes')
+    .upsert({videoId: videoId, transcript: newInfo})
+    .eq('profile_id', session.user.id)
+
+
     if(data){
       console.log('update successful data inserted', data)
     }
@@ -51,14 +65,19 @@ function Transcript({videoId}) {
   const fetchDatabaseData = async () => {
     console.log('checking data base')
     const { data, error } = await supabase
-    .from('Notes')
+    .from('notes')
     .select('transcript')
     .eq('videoId', videoId)
     .single()
+    //.eq('profile_id', session.user.id)
+    //.single()
     
     if (data) { // this is terrible
       console.log('database on data', data)
       setTranscript(data.transcript)
+      if(data.transcript == null){
+        fetchTranscriptData()
+      }
       // if(data.transcript == null){
       //   fetchTranscriptData()
       // }

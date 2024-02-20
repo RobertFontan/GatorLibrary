@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react'
 import {Col, Nav, Row, Tab} from 'react-bootstrap';
 
 import Note from '../components/Note';
+import { useSession } from '../components/SessionContext';
 
 import supabase from '../config/supabaseClient'
 
@@ -10,13 +11,15 @@ import supabase from '../config/supabaseClient'
 function Notes() {
 
   const [notes, setNotes] = useState(null)
+  const session = useSession()
 
   useEffect(() => {
     const fetchData = async () =>{
       
       const { data, error } = await supabase
-      .from('Notes')
-      .select('Notes, title, videoId')
+      .from('notes')
+      .select('content, title, videoId')
+      .eq('profile_id', session.user.id)
 
 
       if(data){
@@ -53,7 +56,7 @@ function Notes() {
               <Tab.Content className='note-tab-content'>
                 {notes.map((e) => (
                   <Tab.Pane className='note-tab-content' eventKey={e.videoId}>
-                    <Note title={e.title} videoID={e.videoId} data={e.Notes} />
+                    <Note title={e.title} videoID={e.videoId} data={e.content} />
                   </Tab.Pane>
                 ))}
               </Tab.Content>

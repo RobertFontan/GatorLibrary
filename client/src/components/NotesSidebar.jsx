@@ -2,29 +2,34 @@ import React, {useState, useEffect} from 'react'
 import {Button, Alert} from 'react-bootstrap'
 
 import supabase from '../config/supabaseClient'
+import { useSession } from './SessionContext'
 
 function NotesSidebar({pRef ,title ,videoId}) {
   const [data, setData] = useState(null)
   const [notes, setNotes] = useState(null)
   const [timestamps, setTimestamps] = useState(null) // get from db?
 
+  const session = useSession()
+
   // getting notes && timestamps
   useEffect(() => {
     const fetchData = async () =>{
       const { data, error } = await supabase
-      .from('Notes')
-      .select('Notes, Timestamps')
+      .from('notes')
+      .select('content, timestamps')
       .eq('videoId', videoId)
+      .eq('profile_id', session.user.id)
       .single()
+
       if(error){
         console.log('initRender', error)
       }
 
       if (data) { 
-        console.log('notedata', data.Timestamps)
+        console.log('notedata', data.timestamps)
         setData(data)
-        setNotes(data.Notes)
-        setTimestamps(data.Timestamps)
+        setNotes(data.content)
+        setTimestamps(data.timestamps)
       }
     } 
     fetchData()
@@ -33,9 +38,11 @@ function NotesSidebar({pRef ,title ,videoId}) {
   // updates row if error insert row
   const handleSave = async () => {
     const {data, error} = await supabase
-    .from('Notes')
-    .update({Notes: notes, Timestamps: timestamps})
+    .from('notes')
+    .update({content: notes, timestamps: timestamps})
     .eq('videoId', videoId)
+    .eq('profile_id', session.user.id)
+
     if(data){
       console.log('handlesave', data)
     }
@@ -45,8 +52,11 @@ function NotesSidebar({pRef ,title ,videoId}) {
 
     if(error == null){
       const { error } = await supabase
-      .from('Notes')
-      .insert({ Timestamps: timestamps, title: title, videoId, Notes: notes })
+      .from('notes')
+      .insert({ timestamps: timestamps, title: title, videoId, content: notes, profile_id: session.user.id})
+      if(error){
+        console.error('note insert error', error)
+      }
     }
   }
 
