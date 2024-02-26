@@ -88,6 +88,13 @@
   
 }
 
+.inputGroup select, .inputGroup input[type="text"] {
+    height: 40px; 
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #cccccc;
+    padding: 0 10px; 
+}
 
 
 html {
