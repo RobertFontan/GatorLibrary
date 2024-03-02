@@ -28,8 +28,8 @@ function Login() {
           showLinks={false}
           appearance={{
             style: {
-              input: {
-                width: '500px', marginTop: '0px', fontFamily: 'Sarabun', border: '3px solid black', background: 'white'
+              input:{
+                width: '500px', marginTop: '0px', fontFamily: 'Sarabun', border:'3px solid black', background: 'white', fontFamily:'Sarabun'
               },
               button: {
                 backgroundColor: 'black', color: 'white', borderRadius: '20px',

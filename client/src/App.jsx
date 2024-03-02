@@ -12,7 +12,8 @@ import Profile from './routes/Profile'
 
 
 import NavBar from "./components/Navbar";
-import SignUp from './routes/SignUp';
+import SignUp from './routes/SignUp'; 
+import StartUp from './routes/StartUp';
 
 
 import { SessionProvider } from "./components/SessionContext";
@@ -34,7 +35,8 @@ const AppContent = () => {
         )}
         <Col className={showNavBar ? "content" : "content-full-width"}>
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<StartUp />}/>
+                 <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/home" element={<Home />} />
             <Route path="/watching" element={<Watching />} />
