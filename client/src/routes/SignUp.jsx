@@ -30,7 +30,7 @@ const SignUp = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    console.log('SIGN UP IS CALLED')
+    console.log('SIGN UP IS CALLED', email, password, firstName, lastName, graduationYear, major, linkedInUrl)
 
     const { user, error } = await supabase.auth.signUp({
       email,
@@ -38,13 +38,11 @@ const SignUp = () => {
       options: {
         // this is where user information is put in user auth table NOT profiles table
         data: {
-          full_name: fullName,
-          student_type: studentType,
-          year: gradYear,
+          full_name: {fullName: firstName + ' ' + lastName},
+          //student_type: studentType,
+          year: graduationYear,
           major: major,
-          linkedin: linkedin,
-         
-
+          linkedin: linkedInUrl
         }
       }
     });
@@ -58,7 +56,7 @@ const SignUp = () => {
     if (user) {
       const { data, error } = await supabase
         .from('profiles')
-        .insert([{ id: user.id, full_name: fullName, student_type: studentType, year: gradYear, major: major, linkedin: linkedin}])
+        .insert([{ id: user.id, full_name: {fullName: firstName + ' ' + lastName}, year: graduationYear, major: major, linkedin: linkedInUrl}])
 
 
       if(data)  {
