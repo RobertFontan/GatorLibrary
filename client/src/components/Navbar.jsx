@@ -15,6 +15,8 @@ function NavBar() {
 
   const handleSignOut = async () => {
     try {
+      console.log('Session:', session);
+
       await supabase.auth.signOut();
       console.log('User signed out successfully');
       navigate('/'); 
