@@ -4,7 +4,9 @@ import {Col, Nav, Row, Tab} from 'react-bootstrap';
 import Course from '../components/Course'
 import courses from '../data/courses'
 import Note from '../components/Note';
-
+import img1 from '../images/img1.jpeg';
+import img2 from '../images/img2.jpeg';
+import img3 from '../images/img3.jpeg';
 import supabase from '../config/supabaseClient'
 import { useSession } from '../components/SessionContext'
 
@@ -14,6 +16,11 @@ function Profile() {
 
   const [profile, setProfile] = useState(null)
   const [courses, setCourses] = useState(null)
+  const [todos, setTodos] = useState([])
+  const [newTodo, setNewTodo] = useState('')
+  const [backgroundImage, setBackgroundImage] = useState(img1); // Default background image
+
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -43,13 +50,89 @@ function Profile() {
         if (errorCourses) {
           console.error('error', errorCourses);
         }
+
+        const { data: todosData, error: todosError } = await supabase
+        .from('todos')
+        .select('*')
+        .eq('user_id', session.user.id);
+
+      setTodos(todosData || []);
+
+      if (todosError) {
+        console.error('To-do list fetch error', todosError);
       }
+
+
+
+     
+
+
+      }
+      
     };
 
     fetchUserData();
   }, [session]);
 
   const quizScores = [85, 92, 78];
+
+  const addTodo = async () => {
+    if (newTodo.trim() !== '') {
+      try {
+       
+        await supabase
+          .from('todos')
+          .insert([
+            {
+              user_id: session.user.id,
+              todo: newTodo,
+            },
+          ]);
+  
+       
+        const { data: refreshedTodosData, error: refreshError } = await supabase
+          .from('todos')
+          .select('*')
+          .eq('user_id', session.user.id);
+  
+        if (refreshedTodosData) {
+          setTodos(refreshedTodosData || []);
+          setNewTodo('');
+        }
+  
+        if (refreshError) {
+          console.error('To-do list refetch error', refreshError);
+        }
+      } catch (error) {
+        console.error('Error adding todo', error);
+      }
+    }
+  };
+  
+  
+  
+  const removeTodo = async (id) => {
+    const { data, error } = await supabase.from('todos').delete().eq('id', id);
+  
+    if (error) {
+      console.error('error', error);
+    } else {
+      setTodos(todos.filter((todo) => todo.id !== id));
+    }
+  };
+
+  const handleBackgroundImageChange = () => {
+    if (backgroundImage === img1) {
+      setBackgroundImage(img2);
+    } else if (backgroundImage === img2) {
+      setBackgroundImage(img3); 
+    } else {
+      setBackgroundImage(img1);
+    }
+  };
+  
+  
+  
   /*
 
     
@@ -63,70 +146,101 @@ function Profile() {
 
 return (
   <div>
-  {profile ? (
-    <div>
-     <h2>Welcome, {profile.full_name} ...</h2>
-      <div>
-      <div className="button-spacing"></div>
-      <h4>Selected Courses</h4>
-      <ul>
-      {courses && courses.map(course => <p key={course.id}>{course.title}</p>)}
-        </ul>
-    </div>
+    {profile ? (
+      <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', minHeight: '100vh' }}>
+        <div className="transparent-container">
 
-    {/* User Profile */}
-    <div className="user-profile">
-        <img
-          className="profile-picture"
-          src="https://placekitten.com/150/150" // Replace with the URL of your profile picture
-          alt="Profile"
-        />
-        <h2 className="user-name">{profile.full_name}</h2>
-        <p className="user-bio">{profile.student_type}</p>
-        <ul className="user-details">
-          <li>Email: {profile.email}</li>
-          <li>Year: {profile.year}</li>
-        </ul>
-        <div className="user-buttons">
-          <button className="button" onClick={() => console.log('Button 1 clicked')}>
-            Edit Graduation Checklist
-          </button>
-          <div className="button-spacing"></div>
-          <button className="button" onClick={() => console.log('Button 2 clicked')}>
-            Video Preferences
-          </button>
+          <div className="transparent-box welcome-box">
+            <h2>Welcome, {profile.full_name} ...</h2>
+          </div>
+
+          <div className="transparent-box courses-box">
+            <div>
+              <h4>Selected Courses</h4>
+              <ul>
+                {courses && courses.map(course => <p key={course.id}>{course.title}</p>)}
+              </ul>
+            </div>
+          </div>
+
+          <div className="transparent-box quizzes-box">
+            <div>
+              <h4>Previous Quizzes</h4>
+              <div className="quiz-buttons">
+                {quizScores.map((score, index) => (
+                  <button key={index} onClick={() => console.log(`Quiz ${index + 1} Score: ${score}`)}>
+                    Quiz {index + 1} Score: {score}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="transparent-box history-box">
+            <div>
+              <h4>History</h4>
+              {/* Add history content here */}
+            </div>
+          </div>
+
+          <div className="transparent-box user-profile-box">
+            <img
+              className="profile-picture"
+              src="https://placekitten.com/150/150"
+              alt="Profile"
+            />
+            <h2 className="user-name">{profile.full_name}</h2>
+            <p className="user-bio">{profile.student_type}</p>
+            <ul className="user-details">
+              <li>Email: {profile.email}</li>
+              <li>Year: {profile.year}</li>
+            </ul>
+            <div className="user-buttons">
+              <button className="button" onClick={() => console.log('Button 1 clicked')}>
+                Edit Graduation Checklist
+              </button>
+              <div className="button-spacing"></div>
+              <button className="button" onClick={() => console.log('Button 2 clicked')}>
+                Video Preferences
+              </button>
+            </div>
+          </div>
+
+          <div className="transparent-box todo-box">
+            <h4>To-Do List</h4>
+            <div className="todo-input">
+              <input
+                type="text"
+                value={newTodo}
+                onChange={(e) => setNewTodo(e.target.value)}
+                placeholder="Add a new to-do"
+              />
+              <button onClick={addTodo}>Add</button>
+            </div>
+            <ul className="todo-list">
+              {todos.map((todo) => (
+                <li key={todo.id} className="todo-item">
+                  {todo.todo}
+                  <button onClick={() => removeTodo(todo.id)}>Remove</button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
         </div>
-      </div>
 
-       {/* Previous Quizzes */}
-       <div>
-        <div className="button-spacing"></div>
-        <h4>Previous Quizzes</h4>
-        <div className="quiz-buttons">
-          {/* Three buttons with latest quiz scores */}
-          {quizScores.map((score, index) => (
-            <button key={index} onClick={() => console.log(`Quiz ${index + 1} Score: ${score}`)}>
-              Quiz {index + 1} Score: {score}
-            </button>
-          ))}
-        </div>
-      </div>
+        <button className="change-bg-button" onClick={handleBackgroundImageChange}>
+  Change Background Image
+</button>
 
-       {/* History */}
-       <div>
-        <div className="button-spacing"></div>
-        <div className="button-spacing"></div>
-        <h4>History</h4>
-        {/* Add history content here */}
       </div>
-    
+    ) : (
+      <p>Loading...</p>
+    )}
+  </div>
+);
 
-    </div>
-  ) : (
-    <p>Loading...</p>
-  )}
-</div>
-  );
-};
+
+}
 
 export default Profile;
