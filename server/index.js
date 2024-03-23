@@ -97,7 +97,12 @@ app.post('/generate-questions', async (req, res) => {
   
   // maybe add variables?
 
-  const systemMessage = `Make a question list for the following content`;
+  const systemMessage = `Make a list of multiple choice questions with answers with the following content`;
+
+  // old system message
+  //const systemMessage = `Make a question list for the following content`;
+
+
 
   try {
     console.log('Inside /generate-questions route, about to call OpenAI API');
