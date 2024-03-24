@@ -24,15 +24,15 @@ function App() {
       <Container fluid className="app-container">
         {/* <div className='App'> */}
           <Row className="App">
-            {/* <Col lg={2} className="navbar-col">
+            <Col lg={2} className="navbar-col">
               <NavBar />
-            </Col> */}
+            </Col>
             <Col className="content">
               <Routes>
                  <Route path="/" element={<StartUp />}/>
                  <Route path="/login" element={<Login/>}/>
                  <Route path="/signup" element={<SignUp />}/>
-                   {/* <Route path="/" element={<Home />}/> */}
+                   <Route path="/" element={<Home />}/>
                    <Route path="/watching" element={<Watching />}/>
                    <Route path="/watching/:course/:videoID" element={<Watching />}/>
                    <Route path="/notes" element={<Notes />}/>
