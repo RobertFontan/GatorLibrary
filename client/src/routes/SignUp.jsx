@@ -38,7 +38,7 @@ const SignUp = () => {
       options: {
         // this is where user information is put in user auth table NOT profiles table
         data: {
-          full_name: {fullName: firstName + ' ' + lastName},
+          full_name: `${firstName} ${lastName}`,
           //student_type: studentType,
           year: graduationYear,
           major: major,
