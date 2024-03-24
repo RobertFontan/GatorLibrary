@@ -1,3 +1,252 @@
+
+
+.button-spacing {
+  height: 10px;
+}
+
+
+
+.user-profile {
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 300px;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
+.profile-picture-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-picture {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  
+}
+
+
+
+.user-name {
+  margin: 10px 0;
+}
+
+.user-bio {
+  color: #555;
+}
+
+.user-details {
+  list-style: none;
+  padding: 0;
+}
+
+.user-details li {
+  margin: 5px 0;
+}
+
+.user-buttons {
+  margin-top: 15px;
+}
+
+.user-buttons button {
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.user-buttons button:last-child {
+  margin-right: 0;
+}
+
+.user-buttons button:hover {
+  background-color: #2980b9;
+}
+
+.quiz-buttons button {
+  background-color: #3498db;
+  color: #fff;
+  border: 2px solid #2980b9;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 10px;
+}
+
+.quiz-buttons button:hover {
+  background-color: #2980b9;
+}
+
+.quiz-buttons button:last-child {
+  margin-right: 0;
+}
+
+.transparent-container {
+  display: inline-block;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.transparent-box {
+  flex: 1;
+  margin: 10px;
+  border-radius: 10px;
+}
+
+.welcome-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+}
+
+.courses-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+}
+
+.quizzes-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+}
+
+.history-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+}
+
+.user-profile-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.change-bg-button-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.change-bg-button {
+  position: fixed;
+  bottom: 0;
+  left: 14px;
+  background-color: #ffffff; 
+  padding: 6px; /* Adjust padding to make it smaller */
+  font-size: 14px; /* Adjust font size */
+  cursor: pointer;
+}
+
+
+
+.todo-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  position: absolute;
+  bottom: 10px; 
+  right: 10px; 
+}
+
+
+.todo-input {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.todo-input input {
+  flex: 1;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.todo-input button {
+  padding: 8px 12px;
+  font-size: 16px;
+  background-color: #28a745; 
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.todo-input button:hover {
+  background-color: #218838; 
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.todo-item button {
+  background-color: #dc3545; 
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.todo-item button:hover {
+  background-color: #c82333; 
+}
+
+
+@media only screen and (max-width: 600px) {
+  .user-profile {
+    width: calc(100% - 40px); /* Adjust width */
+    max-width: none;
+    right: 20px; /* Adjust positioning */
+  }
+}
+
+/* For screens smaller than 400px */
+@media only screen and (max-width: 400px) {
+  .user-profile {
+    padding: 10px; /* Adjust padding */
+  }
+}
+
+/* For screens smaller than 320px */
+@media only screen and (max-width: 320px) {
+  .user-profile {
+    top: 10px; /* Adjust positioning */
+    right: 10px; /* Adjust positioning */
+  }
+}
+
 /* MyComponent.css */
 
 .my-button {
@@ -12,3 +261,4 @@
     height: 10px;
   }
   
+
