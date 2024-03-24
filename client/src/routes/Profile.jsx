@@ -7,6 +7,7 @@ import Note from '../components/Note';
 import img1 from '../images/img1.jpeg';
 import img2 from '../images/img2.jpeg';
 import img3 from '../images/img3.jpeg';
+import profileImage from '../images/kitten.jpeg'; 
 import supabase from '../config/supabaseClient'
 import { useSession } from '../components/SessionContext'
 
@@ -184,11 +185,12 @@ return (
           </div>
 
           <div className="transparent-box user-profile-box">
-            <img
-              className="profile-picture"
-              src="https://placekitten.com/150/150"
-              alt="Profile"
-            />
+          <div className="profile-picture-container">
+          <div
+        className="profile-picture"
+        style={{ backgroundImage: `url(${profileImage})` }}
+      />
+      </div>
             <h2 className="user-name">{profile.full_name}</h2>
             <p className="user-bio">{profile.student_type}</p>
             <ul className="user-details">
@@ -228,10 +230,11 @@ return (
           </div>
 
         </div>
-
+        <div className="change-bg-button-container">
         <button className="change-bg-button" onClick={handleBackgroundImageChange}>
   Change Background Image
 </button>
+</div>
 
       </div>
     ) : (

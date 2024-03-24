@@ -1,31 +1,55 @@
 .brand-logo {
-    height: 50px; /* Adjust the height as needed */
-    margin-right: 10px; /* Optional: Add margin to the right for spacing */
+  height: 50px; /* Adjust the height as needed */
+  margin-right: 10px; /* Optional: Add margin to the right for spacing */
+}
+
+.sign-out-container {
+  display: flex;
+  justify-content: center;
+}
+
+.sign-out-button {
+  background-color: black;
+  color: white;
+  border-radius: 0;
+  max-width: 250px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sign-out-button:hover {
+  background-color: #333; 
+}
+
+.button-text {
+  font-weight: bold;
+}
+
+/* Media queries for responsiveness */
+
+/* For screens smaller than 768px (e.g., tablets) */
+@media only screen and (max-width: 768px) {
+  .brand-logo {
+      height: 40px; /* Adjust height for smaller screens */
   }
 
-
-  .sign-out-container {
-    display: flex;
-    justify-content: center;
-  }
-  
   .sign-out-button {
-    background-color: black;
-    color: white;
-    border-radius: 0;
-    max-width: 250px;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+      max-width: 200px; /* Adjust max-width for smaller screens */
   }
-  
-  .sign-out-button:hover {
-    background-color: #333; 
+}
+
+/* For screens smaller than 576px (e.g., smartphones) */
+@media only screen and (max-width: 576px) {
+  .brand-logo {
+      height: 30px; /* Adjust height for even smaller screens */
   }
-  
-  .button-text {
-    font-weight: bold;
+
+  .sign-out-button {
+      max-width: 150px; /* Adjust max-width for even smaller screens */
+      padding: 8px 16px; /* Adjust padding for smaller screens */
   }
+}
