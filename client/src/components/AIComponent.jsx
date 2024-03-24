@@ -17,7 +17,7 @@ function AIComponent() {
     const handleShow = () => setShow(true);
 
 
-    const [option, setOption] = useState('Summary')
+    const [option, setOption] = useState('Questions')
 
     const renderOption = () => {
       switch(option){
@@ -44,7 +44,7 @@ function AIComponent() {
         <Offcanvas.Header closeButton className='ai-component-header'>
           <Offcanvas.Title className='dropdown-container-ai'>
             <h2>{option}</h2>
-            <Dropdown className='dropdown'>
+            {/* <Dropdown className='dropdown'>
               <Dropdown.Toggle variant="success" className="dropdown-basic-ai">
                 Generate the following: {option}
               </Dropdown.Toggle>
@@ -53,7 +53,7 @@ function AIComponent() {
                 <Dropdown.Item onClick={() => setOption('List')}>List</Dropdown.Item>
                 <Dropdown.Item onClick={() => setOption('Questions')}>Questions</Dropdown.Item>
               </Dropdown.Menu>
-            </Dropdown>
+            </Dropdown> */}
           </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body className='ai-component-body'>

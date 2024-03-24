@@ -11,11 +11,4 @@
   .button-spacing {
     height: 10px;
   }
-  .DCbutton {
-    background-color: transparent;
-      /* No background color */
-      border: none;
-      /* No border */
-      color: black;
-      /* Text color */
-  }
+  

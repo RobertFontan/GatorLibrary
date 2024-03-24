@@ -3,171 +3,244 @@ import './Profile.css'
 import {Col, Nav, Row, Tab} from 'react-bootstrap';
 import Course from '../components/Course'
 import courses from '../data/courses'
-
 import Note from '../components/Note';
-
+import img1 from '../images/img1.jpeg';
+import img2 from '../images/img2.jpeg';
+import img3 from '../images/img3.jpeg';
 import supabase from '../config/supabaseClient'
-
-
+import { useSession } from '../components/SessionContext'
 
 
 function Profile() {
+  const session = useSession()
 
-  const [notes, setNotes] = useState(null)
+  const [profile, setProfile] = useState(null)
+  const [courses, setCourses] = useState(null)
+  const [todos, setTodos] = useState([])
+  const [newTodo, setNewTodo] = useState('')
+  const [backgroundImage, setBackgroundImage] = useState(img1); // Default background image
+
+
 
   useEffect(() => {
-    const fetchData = async () =>{
+    const fetchUserData = async () => {
+      if (session) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        setProfile(data);
+
+        console.log('SETPROFILE', data, session.user.id);
+
+        if (error) {
+          console.error('error', error);
+        }
+
+        const { data: coursesData, error: errorCourses } = await supabase
+          .from('courses')
+          .select('*')
+          .eq('profile_id', session.user.id);
+
+        setCourses(coursesData);
+        console.log('SETCOURSES', coursesData, session.user.id);
+
+        if (errorCourses) {
+          console.error('error', errorCourses);
+        }
+
+        const { data: todosData, error: todosError } = await supabase
+        .from('todos')
+        .select('*')
+        .eq('user_id', session.user.id);
+
+      setTodos(todosData || []);
+
+      if (todosError) {
+        console.error('To-do list fetch error', todosError);
+      }
+
+
+
+     
+
+
+      }
       
-      const { data, error } = await supabase
-      .from('Notes')
-      .select('Notes, title, videoId')
+    };
 
+    fetchUserData();
+  }, [session]);
 
-      if(data){
-        setNotes(data)
-        console.log('NOTES', data)
-      }
-      if(error){
-        console.log('NOTES ERROR', error)
-      }
-    } 
-    fetchData()
-  
-  }, [])
+  const quizScores = [85, 92, 78];
 
-
-
-  return (
-    <>
-   
-      <h1>Profile</h1>
-      <div>
-      <h3>Degree Checklist</h3>
-      <ul>
-      <div class="container"> 
-              <div id="accordion">
-  <div class="card">
-    <div class="card-header" id="headingOne">
-      <h5 class="mb-0">
-        <button class="DCbutton" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" color ="white">
-          CEN4721 - Human Computer Interaction
-        </button>
-      </h5>
-    </div>
-
-    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-      <div class="card-body">
-        Recommended Videos:
-        <Col lg={9} className='left-screen'>
-            {courses.map(course => <Course course={course} />)}
-          </Col>
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header" id="headingTwo">
-      <h5 class="mb-0">
-        <button class="DCbutton" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-          COT3100 - Discrete Structures
-        </button>
-      </h5>
-    </div>
-    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-      <div class="card-body">
-        Recommended Videos:
-        <Col lg={9} className='left-screen'>
-            {courses.map(course => <Course course={course} />)}
-          </Col>
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header" id="headingThree">
-      <h5 class="mb-0">
-        <button class="DCbutton" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-          COP46000 -  Operating Systems
-        </button>
-      </h5>
-    </div>
-    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-      <div class="card-body">
-        Recommended Videos:
-        <Col lg={9} className='left-screen'>
-            {courses.map(course => <Course course={course} />)}
-          </Col>
-      </div>
-    </div>
-  </div>
-    <div class="card">
-    <div class="card-header" id="headingFour">
-      <h5 class="mb-0">
-        <button class="DCbutton" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-          STA3032 - Engineering Statistics
-        </button>
-      </h5>
-    </div>
-    <div id="collapseFour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-      <div class="card-body">
-      Recommended Videos:
-        <Col lg={9} className='left-screen'>
-            {courses.map(course => <Course course={course} />)}
-          </Col>
-      </div>
-    </div>
-  </div>
-    <div class="card">
-    <div class="card-header" id="headingFive">
-      <h5 class="mb-0">
-        <button class="DCbutton" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-          MAC2311 - Calculus 1
-        </button>
-      </h5>
-    </div>
-    <div id="collapseFive" class="collapse" aria-labelledby="headingfive" data-parent="#accordion">
-      <div class="card-body">
-      Recommended Videos:
-        <Col lg={9} className='left-screen'>
-            {courses.map(course => <Course course={course} />)}
-          </Col></div>
-    </div>
-  </div>
-    <div class="card">
-    <div class="card-header" id="headingSix">
-      <h5 class="mb-0">
-        <button class="DCbutton" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-          MAC2312 - Calculus 2
-        </button>
-      </h5>
-    </div>
-    <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordion">
-      <div class="card-body">
-      Recommended Videos:
-        <Col lg={9} className='left-screen'>
-            {courses.map(course => <Course course={course} />)}
-          </Col></div>
-    </div>
-  </div>
-</div>
-
-      </div>   
-      </ul>
-    </div>
-
-    <div>
-      <h1>My Component with Buttons</h1>
-
-      {/* Button 1 with spacing */}
-      <button className="my-button" onClick={() => console.log('Button 1 clicked')}>Button 1</button>
-
-      {/* Add spacing between buttons */}
-      <div className="button-spacing"></div>
-
-      {/* Button 2 with spacing */}
-      <button className="my-button" onClick={() => console.log('Button 2 clicked')}>Button 2</button>
-    </div>
+  const addTodo = async () => {
+    if (newTodo.trim() !== '') {
+      try {
        
-    </>
-  )
+        await supabase
+          .from('todos')
+          .insert([
+            {
+              user_id: session.user.id,
+              todo: newTodo,
+            },
+          ]);
+  
+       
+        const { data: refreshedTodosData, error: refreshError } = await supabase
+          .from('todos')
+          .select('*')
+          .eq('user_id', session.user.id);
+  
+        if (refreshedTodosData) {
+          setTodos(refreshedTodosData || []);
+          setNewTodo('');
+        }
+  
+        if (refreshError) {
+          console.error('To-do list refetch error', refreshError);
+        }
+      } catch (error) {
+        console.error('Error adding todo', error);
+      }
+    }
+  };
+  
+  
+  
+  const removeTodo = async (id) => {
+    const { data, error } = await supabase.from('todos').delete().eq('id', id);
+  
+    if (error) {
+      console.error('error', error);
+    } else {
+      setTodos(todos.filter((todo) => todo.id !== id));
+    }
+  };
+
+  const handleBackgroundImageChange = () => {
+    if (backgroundImage === img1) {
+      setBackgroundImage(img2);
+    } else if (backgroundImage === img2) {
+      setBackgroundImage(img3); 
+    } else {
+      setBackgroundImage(img1);
+    }
+  };
+  
+  
+  
+  /*
+
+    
+    const userName = "John Doe";
+    const profession = "Student";
+    const email = "john.doe@example.com";
+    const location = "Gainesville, FL";
+    const joined = "January 1, 2024";
+*/
+
+
+return (
+  <div>
+    {profile ? (
+      <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', minHeight: '100vh' }}>
+        <div className="transparent-container">
+
+          <div className="transparent-box welcome-box">
+            <h2>Welcome, {profile.full_name} ...</h2>
+          </div>
+
+          <div className="transparent-box courses-box">
+            <div>
+              <h4>Selected Courses</h4>
+              <ul>
+                {courses && courses.map(course => <p key={course.id}>{course.title}</p>)}
+              </ul>
+            </div>
+          </div>
+
+          <div className="transparent-box quizzes-box">
+            <div>
+              <h4>Previous Quizzes</h4>
+              <div className="quiz-buttons">
+                {quizScores.map((score, index) => (
+                  <button key={index} onClick={() => console.log(`Quiz ${index + 1} Score: ${score}`)}>
+                    Quiz {index + 1} Score: {score}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="transparent-box history-box">
+            <div>
+              <h4>History</h4>
+              {/* Add history content here */}
+            </div>
+          </div>
+
+          <div className="transparent-box user-profile-box">
+            <img
+              className="profile-picture"
+              src="https://placekitten.com/150/150"
+              alt="Profile"
+            />
+            <h2 className="user-name">{profile.full_name}</h2>
+            <p className="user-bio">{profile.student_type}</p>
+            <ul className="user-details">
+              <li>Email: {profile.email}</li>
+              <li>Year: {profile.year}</li>
+            </ul>
+            <div className="user-buttons">
+              <button className="button" onClick={() => console.log('Button 1 clicked')}>
+                Edit Graduation Checklist
+              </button>
+              <div className="button-spacing"></div>
+              <button className="button" onClick={() => console.log('Button 2 clicked')}>
+                Video Preferences
+              </button>
+            </div>
+          </div>
+
+          <div className="transparent-box todo-box">
+            <h4>To-Do List</h4>
+            <div className="todo-input">
+              <input
+                type="text"
+                value={newTodo}
+                onChange={(e) => setNewTodo(e.target.value)}
+                placeholder="Add a new to-do"
+              />
+              <button onClick={addTodo}>Add</button>
+            </div>
+            <ul className="todo-list">
+              {todos.map((todo) => (
+                <li key={todo.id} className="todo-item">
+                  {todo.todo}
+                  <button onClick={() => removeTodo(todo.id)}>Remove</button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+        </div>
+
+        <button className="change-bg-button" onClick={handleBackgroundImageChange}>
+  Change Background Image
+</button>
+
+      </div>
+    ) : (
+      <p>Loading...</p>
+    )}
+  </div>
+);
+
+
 }
 
-export default Profile
+export default Profile;
