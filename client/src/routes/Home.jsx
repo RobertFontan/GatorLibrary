@@ -13,7 +13,9 @@ import { useSession } from '../components/SessionContext';
 import explore from "../data/explore"
 /* Bootstrap  */
 import { Container, Row, Col, Nav } from 'react-bootstrap'
-import courses from '../data/courses'
+//import courses from '../data/courses'
+
+
 function Home() {
   const session = useSession()
 
