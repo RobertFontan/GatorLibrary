@@ -9,6 +9,7 @@ import Notes from './routes/Notes'
 import Saved from './routes/Saved'
 import Watching from './routes/Watching'
 import Profile from './routes/Profile'
+import Pomodoro from './routes/Pomodoro'
 
 
 import NavBar from "./components/Navbar";
@@ -42,6 +43,7 @@ const AppContent = () => {
             <Route path="/notes" element={<Notes />} />
             <Route path="/saved" element={<Saved />} />
             <Route path="/profile" element={<Profile />}/>
+            <Route path="/pomodoro" element={<Pomodoro />} />
           </Routes>
         </Col>
       </Row>

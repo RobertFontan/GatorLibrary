@@ -1,14 +1,17 @@
 import React, {useState, useEffect} from 'react'
 import './Profile.css'
 import {Col, Nav, Row, Tab} from 'react-bootstrap';
+import { Link, Routes, Route, BrowserRouter, useLocation } from "react-router-dom"
 import Course from '../components/Course'
 import courses from '../data/courses'
 import Note from '../components/Note';
 import img1 from '../images/img1.jpeg';
 import img2 from '../images/img2.jpeg';
 import img3 from '../images/img3.jpeg';
+import profileImage from '../images/kitten.jpeg'; 
 import supabase from '../config/supabaseClient'
 import { useSession } from '../components/SessionContext'
+
 
 
 function Profile() {
@@ -61,11 +64,6 @@ function Profile() {
       if (todosError) {
         console.error('To-do list fetch error', todosError);
       }
-
-
-
-     
-
 
       }
       
@@ -184,11 +182,12 @@ return (
           </div>
 
           <div className="transparent-box user-profile-box">
-            <img
-              className="profile-picture"
-              src="https://placekitten.com/150/150"
-              alt="Profile"
-            />
+          <div className="profile-picture-container">
+          <div
+        className="profile-picture"
+        style={{ backgroundImage: `url(${profileImage})` }}
+      />
+      </div>
             <h2 className="user-name">{profile.full_name}</h2>
             <p className="user-bio">{profile.student_type}</p>
             <ul className="user-details">
@@ -196,13 +195,22 @@ return (
               <li>Year: {profile.year}</li>
             </ul>
             <div className="user-buttons">
-              <button className="button" onClick={() => console.log('Button 1 clicked')}>
+              <Link to={"/dc"}>
+              <button className="button" onClick={() => console.log('/dc')}>
                 Edit Graduation Checklist
               </button>
+              </Link>
               <div className="button-spacing"></div>
               <button className="button" onClick={() => console.log('Button 2 clicked')}>
                 Video Preferences
               </button>
+              <div className="button-spacing"></div>
+              <Link to="/pomodoro">
+  <button className="button">
+    Pomodoro Timer
+  </button>
+</Link>
+
             </div>
           </div>
 
@@ -228,10 +236,11 @@ return (
           </div>
 
         </div>
-
+        <div className="change-bg-button-container">
         <button className="change-bg-button" onClick={handleBackgroundImageChange}>
   Change Background Image
 </button>
+</div>
 
       </div>
     ) : (
