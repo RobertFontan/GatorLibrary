@@ -204,6 +204,13 @@ return (
               <button className="button" onClick={() => console.log('Button 2 clicked')}>
                 Video Preferences
               </button>
+              <div className="button-spacing"></div>
+             <Link to="/pomodoro">
+  <button className="button">
+    Pomodoro Timer
+  </button>
+</Link>
+
             </div>
           </div>
 
