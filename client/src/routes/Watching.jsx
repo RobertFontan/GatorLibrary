@@ -2,12 +2,13 @@ import React, { useEffect, useState, useRef} from 'react'
 import Youtube from 'react-youtube'
 
 /* Components */
-import Comment from '../components/Comment';
 import NotesSidebar from '../components/NotesSidebar';
 import Transcript from '../components/Transcript';
 import DownloadComponent from '../components/DownloadComponent';
 import SaveButton from '../components/SaveButton';
 import AIComponent from '../components/AIComponent';
+import { useSession } from '../components/SessionContext';
+
 /* Routing */
 import { useParams } from 'react-router-dom';
 
@@ -17,13 +18,14 @@ import axios from 'axios';
 import supabase from '../config/supabaseClient';
 
 /* Bootstrap */
-import {Container, Row, Col, Accordion,  Button} from 'react-bootstrap';
+import { Container, Row, Col, Accordion, Button, Form } from 'react-bootstrap';
 
 /* History */
 
 function Watching() {
+  const session = useSession();
   const {course ,videoID} = useParams()
-
+  const [comments, setComments] = useState([]);
 
 
   const [videoData, setVideoData] = useState(null)
@@ -35,6 +37,11 @@ function Watching() {
   
   
   const [saveData, setSaveData] = useState([])
+
+
+
+  const [commentText, setCommentText] = useState('');
+
   
   const opts = {
     height: '390',
@@ -110,47 +117,128 @@ function Watching() {
   }
 
 
+  const fetchComments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('video_id', videoID);
+      if (error) {
+        throw error;
+      }
+      setComments(data || []);
+    } catch (error) {
+      console.error('Error fetching comments:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    fetchComments();
+  }, [videoID]);
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data: userProfile, error: profileError } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', session.user.id)
+        .single();
+      if (profileError) {
+        throw profileError;
+      }
+      const fullName = userProfile ? userProfile.full_name : 'Unknown';
+      const { data: commentData, error: commentError } = await supabase
+        .from('comments')
+        .insert({
+          video_id: videoID,
+          user_id: session.user.id,
+          fullName: fullName,
+          comment_text: commentText
+        });
+      if (commentError) {
+        throw commentError;
+      }
+      console.log('Comment submitted:', commentData);
+      setCommentText('');
+      fetchComments();
+    } catch (error) {
+      console.error('Error submitting comment:', error.message);
+    }
+  };
+
+
+
   return (  
     <>
     <Container fluid className='watching'>
       <Row>
-      <Col lg={6} className="left-screen">
-        
-        <div className="video-player">
-          
-          <Youtube videoId={videoID} opts={opts} onReady={onReady} />
-          <div className="header">
-            <h3>{title}</h3>
-            <DownloadComponent videoId={videoID} />
-            <SaveButton title={title} videoID={videoID} videoData={videoData} saveData={saveData} />
+        <Col lg={6} className='left-screen'>
+          <div className='video-player'>
+            <Youtube videoId={videoID} opts={opts} onReady={onReady} />
+            <div className='header'>
+              <h3>{title}</h3>
+              <DownloadComponent videoId={videoID} />
+              <SaveButton title={title} videoID={videoID} videoData={videoData} saveData={saveData} />
+            </div>
           </div>
-        </div>        
-        <Accordion flush alwaysOpen>
-          <Accordion.Item eventKey='0'>
-            <Accordion.Header>Description</Accordion.Header>
-            <Accordion.Body>{description && <div id="description">{description}</div>}</Accordion.Body>
-          </Accordion.Item>
-
+          <Accordion flush alwaysOpen>
+            <Accordion.Item eventKey='0'>
+              <Accordion.Header>Description</Accordion.Header>
+              <Accordion.Body>{description && <div id='description'>{description}</div>}</Accordion.Body>
+            </Accordion.Item>
             <Accordion.Item eventKey='1'>
               <Accordion.Header>Comments</Accordion.Header>
-              <Accordion.Body><Comment videoId={videoID} /></Accordion.Body>
+              <Accordion.Body>
+              <div style={{ marginBottom: '20px' }}>
+    {comments.length > 0 ? (
+      comments.map((comment, index) => (
+        <div key={index}>
+          <strong>{comment.fullName}</strong>: {comment.comment_text}
+        </div>
+      ))
+    ) : (
+      <p>No comments yet.</p>
+    )}
+    </div>
+                <Form onSubmit={handleCommentSubmit}>
+                  <Form.Group controlId="commentTextarea">
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      placeholder="Write your comment here..."
+                    />
+                  </Form.Group>
+                  <div style={{ marginBottom: '10px' }}> </div>
+                  <div style={{ textAlign: 'right' }}>
+                  <Button variant="primary" type="submit">
+                    Submit
+                  </Button>
+                  </div>
+                </Form>
+              </Accordion.Body>
             </Accordion.Item>
+          </Accordion>
 
-          </Accordion>      
         </Col>
-        <Col  className='right-screen'>
-          <div className="button-container">
-            <Button className={sidebar === "notes" ? "active": ""} onClick={()=> handleClick("notes")}>Notes</Button>
-            <Button className={sidebar === "transcript" ? "active": ""} onClick={() => handleClick("transcript")}>Transcript</Button>
+        <Col className='right-screen'>
+          <div className='button-container'>
+            <Button className={sidebar === 'notes' ? 'active' : ''} onClick={() => handleClick('notes')}>
+              Notes
+            </Button>
+            <Button className={sidebar === 'transcript' ? 'active' : ''} onClick={() => handleClick('transcript')}>
+              Transcript
+            </Button>
             <AIComponent />
           </div>
-          <div className="sidebar">
-            {sidebar === "transcript" ? <Transcript videoId={videoID}/>: <NotesSidebar pRef={playerRef}title={title} videoId={videoID} />}
-          </div>
+          <div className='sidebar'>{sidebar === 'transcript' ? <Transcript videoId={videoID} /> : <NotesSidebar pRef={playerRef} title={title} videoId={videoID} />}</div>
         </Col>
       </Row>
     </Container>
-    </>
+  </>
      
   )
 }

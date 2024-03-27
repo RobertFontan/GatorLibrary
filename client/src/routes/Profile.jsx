@@ -205,7 +205,7 @@ return (
                 Video Preferences
               </button>
               <div className="button-spacing"></div>
-              <Link to="/pomodoro">
+             <Link to="/pomodoro">
   <button className="button">
     Pomodoro Timer
   </button>
