@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const { OpenAI } = require('openai');
 
+
+const { supabase } = require('./supabaseClient');
+
 const app = express();
 app.use(express.json());
 app.use(cors()); // Allows requests from your frontend
@@ -22,11 +25,17 @@ app.use((err, req, res, next) => {
 
 
 app.post('/generate-questions', async (req, res) => {
+  // TODO: this should be called when the user clicks on a button to generate questions 
+  // no need to send userContent
 
+
+  
   const transcript = req.body.userContent;
 
   const systemMessage = 'Generate a numbered list of multiple-choice questions with four options (A, B, C, D), one of which is denoted correct (using parenthesis) from the following content:'
   try {
+
+    // A) , B) 
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
@@ -47,6 +56,19 @@ app.post('/generate-questions', async (req, res) => {
     });
     console.log('received response from openai api', completion)
     res.json({ summary: completion.choices[0].message.content });
+
+
+    const {data, error} = await supabase
+      .from('quiz')
+      .insert([{content: completion.choices[0].message.content}])
+      .select()
+
+
+    console.log('data', data, 'error', error)
+    // TODO: add to quiz table
+    // find a way to make results from it 
+
+
   } catch (err) {
     if (err.status === 429) {
       console.error('Rate limit exceeded', err);
