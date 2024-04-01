@@ -7,7 +7,7 @@ import Summarize from './Summarize';
 import Questions from './Questions';
 import Bullet from './Bullet';
 
-function AIComponent() {
+function AIComponent({videoId}) {
     
 
     // offcanvas logic
@@ -26,7 +26,7 @@ function AIComponent() {
         case 'List':
           return <Bullet />
         case 'Questions':
-          return <Questions />
+          return <Questions videoID={videoId} />
         default:
           return <p>Error</p>
       }

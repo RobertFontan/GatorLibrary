@@ -142,7 +142,7 @@ function Watching() {
           <div className="button-container">
             <Button className={sidebar === "notes" ? "active": ""} onClick={()=> handleClick("notes")}>Notes</Button>
             <Button className={sidebar === "transcript" ? "active": ""} onClick={() => handleClick("transcript")}>Transcript</Button>
-            <AIComponent />
+            <AIComponent videoId={videoID}/>
           </div>
           <div className="sidebar">
             {sidebar === "transcript" ? <Transcript videoId={videoID}/>: <NotesSidebar pRef={playerRef}title={title} videoId={videoID} />}

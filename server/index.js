@@ -29,42 +29,64 @@ app.post('/generate-questions', async (req, res) => {
   // no need to send userContent
 
 
-  
-  const transcript = req.body.userContent;
+  const videoID = req.body.videoID;
 
-  const systemMessage = 'Generate a numbered list of multiple-choice questions with four options (A, B, C, D), one of which is denoted correct (using parenthesis) from the following content:'
+
+
+  console.log(videoID)
   try {
 
-    // A) , B) 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: systemMessage,
-        },
-        {
-          role: 'user',
-          content: transcript,
-        }
-      ],
-      temperature: 0,
-      max_tokens: 3000,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    });
-    console.log('received response from openai api', completion)
-    res.json({ summary: completion.choices[0].message.content });
-
-
-    const {data, error} = await supabase
+    const { data, error } = await supabase
       .from('quiz')
-      .insert([{content: completion.choices[0].message.content}])
-      .select()
-
+      .select('content')
+      .eq('video_id', videoID)
 
     console.log('data', data, 'error', error)
+
+
+    if (data) {
+      console.log('data', data)
+      res.json({ summary: data[0].content });
+    }
+
+    else {
+      const transcript = req.body.userContent;
+      const systemMessage = 'Generate a numbered list of multiple-choice questions with four options (A, B, C, D), one of which is denoted correct (using parenthesis) from the following content:'
+
+      // A) , B) 
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: systemMessage,
+          },
+          {
+            role: 'user',
+            content: transcript,
+          }
+        ],
+        temperature: 0,
+        max_tokens: 3000,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      });
+      console.log('received response from openai api', completion)
+      res.json({ summary: completion.choices[0].message.content });
+
+
+      const { newData, err } = await supabase
+        .from('quiz')
+        .insert([{
+          video_id: videoID,
+          content: completion.choices[0].message.content
+        }])
+        .select()
+      console.log('data', newData, 'error', err)
+
+    }
+
     // TODO: add to quiz table
     // find a way to make results from it 
 
