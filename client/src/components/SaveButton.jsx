@@ -2,12 +2,15 @@ import React, {useState, useEffect} from 'react'
 import Button from 'react-bootstrap/Button'
 import supabase from '../config/supabaseClient'
 
+import { useSession } from './SessionContext'
+
 function SaveButton({title, videoID, videoData, saveData}) {
 
     const [saved, setSaved] = useState(null)
     // a lot of this adapted from robert's code for notes, my bad
     //const [saved, setSaved] = useState(null)
 
+    const session = useSession()
 
     // getting saved video
     // renders from prevous page
@@ -45,9 +48,10 @@ function SaveButton({title, videoID, videoData, saveData}) {
     useEffect(() => {
         const fetchData = async () =>{
             const { data, error } = await supabase
-            .from('Saved')
+            .from('saved')
             .select('*')
             .eq('videoID', videoID)
+            .eq('profile_id', session.user.id)
 
             if (data) {
                 console.log('SAVE BUTTON', data)
@@ -70,8 +74,8 @@ function SaveButton({title, videoID, videoData, saveData}) {
   const handleSave = async () => {
     if (!saved) {
         const {data, error} = await supabase
-        .from('Saved')
-        .insert({ 'videoID': videoID, 'title': title, 'thumbnail': videoData.thumbnails.medium.url, 'date': formatDate(saveData[1]), 'length': iso8601ToSeconds(saveData[0]), 'class': saveData[2]})
+        .from('saved')
+        .insert({ 'videoId': videoID, 'title': title, 'thumbnail': videoData.thumbnails.medium.url, 'date': formatDate(saveData[1]), 'length': iso8601ToSeconds(saveData[0]), 'class': saveData[2], 'profile_id': session.user.id} )
         console.log(data)
 
         if (data) {
@@ -90,9 +94,11 @@ function SaveButton({title, videoID, videoData, saveData}) {
     }
     else {
         const { error } = await supabase
-            .from('Saved')
+            .from('saved')
             .delete()
-            .eq('videoID', videoID)
+            .eq('videoId', videoID)
+            .eq('profile_id', session.user.id)
+
             setSaved(false);
             console.log('Unsaved video.')
     }

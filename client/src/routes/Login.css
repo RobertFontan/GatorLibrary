@@ -103,3 +103,19 @@ html {
 input::placeholder {
     color: #888 !important; /* Update #888 to the color you wish */
   }
+
+/* WATCHING CSS BELOW */
+.fullscreen-modal .modal-dialog {
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    margin: 0.5rem;
+  }
+  
+  .fullscreen-modal .modal-content {
+    width: 40vw; 
+    height: 70vh; 
+    max-height: 100vh;
+    overflow: hidden; 
+  }
+  

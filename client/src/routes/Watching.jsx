@@ -8,6 +8,8 @@ import Transcript from '../components/Transcript';
 import DownloadComponent from '../components/DownloadComponent';
 import SaveButton from '../components/SaveButton';
 import AIComponent from '../components/AIComponent';
+import { Modal} from 'react-bootstrap';
+
 /* Routing */
 import { useParams } from 'react-router-dom';
 
@@ -24,6 +26,7 @@ import {Container, Row, Col, Accordion,  Button} from 'react-bootstrap';
 function Watching() {
   const {course ,videoID} = useParams()
 
+  const [showQuizModal, setShowQuizModal] = useState(false);
 
 
   const [videoData, setVideoData] = useState(null)
@@ -142,7 +145,26 @@ function Watching() {
           <div className="button-container">
             <Button className={sidebar === "notes" ? "active": ""} onClick={()=> handleClick("notes")}>Notes</Button>
             <Button className={sidebar === "transcript" ? "active": ""} onClick={() => handleClick("transcript")}>Transcript</Button>
-            <AIComponent />
+            <AIComponent onClick={() => setShowQuizModal(true)} />
+            {/* make modal component in components and add it here */}
+              <Modal show={showQuizModal} onHide={() => setShowQuizModal(false)} dialogClassName="fullscreen-modal">
+                  <Modal.Header closeButton>
+                    <Modal.Title>Quiz Time</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    {/* Quiz Questions HERE */}
+                    Here will be the quiz questions.
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowQuizModal(false)}>
+                      Close
+                    </Button>
+                    <Button variant="primary">
+                      Submit Answers
+                    </Button>
+                  </Modal.Footer>
+              </Modal>
+
           </div>
           <div className="sidebar">
             {sidebar === "transcript" ? <Transcript videoId={videoID}/>: <NotesSidebar pRef={playerRef}title={title} videoId={videoID} />}

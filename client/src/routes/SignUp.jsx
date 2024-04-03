@@ -1,6 +1,9 @@
 // SignUp.js
 import React, { useState } from 'react';
 import supabase from '../config/supabaseClient';
+import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+
 
 const generateYears = (startYear) => {
     const currentYear = new Date().getFullYear();
@@ -23,32 +26,53 @@ const SignUp = () => {
     const [linkedInUrl, setLinkedInUrl] = useState('');
 
     const years = generateYears(2020);
+    const navigate = useNavigate();
 
-    const handleSignUp = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        const { user, error: signUpError } = await supabase.auth.signUp({ email, password });
-        
-        if (signUpError) {
-            setError(signUpError.message);
-            setLoading(false);
-        } else {
-            // rename 'profiles' to whatever the supabase table is called
-            const { error: profileError } = await supabase
-                .from('profiles')
-                .insert([
-                    { id: user.id, first_name: firstName, last_name: lastName },
-                ]);
-            
-            if (profileError) {
-                setError(profileError.message);
-            } else {
-                setError('');
-                // Redirect or show success message
-            }
-            setLoading(false);
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    console.log('SIGN UP IS CALLED', email, password, firstName, lastName, graduationYear, major, linkedInUrl)
+
+    const { user, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        // this is where user information is put in user auth table NOT profiles table
+        data: {
+          full_name: `${firstName} ${lastName}`,
+          //student_type: studentType,
+          year: graduationYear,
+          major: major,
+          linkedin: linkedInUrl
         }
-    };
+      }
+    });
+
+    if (error) {
+      console.error('error called', error)
+      return;
+    }
+
+    // if user is signed up, insert user into profiles table for management
+    if (user) {
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert([{ id: user.id, full_name: {fullName: firstName + ' ' + lastName}, year: graduationYear, major: major, linkedin: linkedInUrl}])
+
+
+      if(data)  {
+        navigate('/home')
+      }
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+
+      console.log('data', data)
+    }
+
+  }
 
     return (
         <div className='LoginContainerStyling'>

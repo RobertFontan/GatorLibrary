@@ -1,49 +1,42 @@
 import { React, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Login.css'
 
 import { Auth } from '@supabase/auth-ui-react'
 import supabase from '../config/supabaseClient';
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 
-function Login() {
-  
+import { useSession } from '../components/SessionContext'
 
- 
-  const [session, setSession] = useState(null)
+function Login() {
+  const navigate = useNavigate(); 
+  const session = useSession()
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
+    if (session) {
+      navigate('/home')
+    }
+  }, [session])
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-  
 
   if (!session) {
     return (
       <div className='LoginContainerStyling'>
         <h1 className='LoginTitleStyling'> Gator Library</h1>
         <Auth
-          supabaseClient={supabase}   
-          showLinks={false}       
+          supabaseClient={supabase}
+          showLinks={false}
           appearance={{
             style: {
               input:{
                 width: '500px', marginTop: '0px', fontFamily: 'Sarabun', border:'3px solid black', background: 'white', fontFamily:'Sarabun'
               },
               button: {
-                backgroundColor: 'black', color: 'white', borderRadius:'20px', 
-                maxWidth:'250px', padding: '10px 20px', display: 'flex', alignItems: 'center',
-                justifyContent:'center', margin: '20px auto'},
-        
+                backgroundColor: 'black', color: 'white', borderRadius: '20px',
+                maxWidth: '250px', padding: '10px 20px', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', margin: '20px auto'
+              },
+
             },
           }}
           localization={{
@@ -51,39 +44,25 @@ function Login() {
               sign_in: {
                 button_label: 'Log In',
                 email_label: ' ',
-                email_input_placeholder:'Username',
+                email_input_placeholder: 'Username',
                 password_label: ' ',
                 password_input_placeholder: 'Password'
 
               }
             }
-          }}  
+          }}
           providers={[]}
         />
         <div style={{ marginTop: "0px", textDecoration: 'underline' }}>
-           <Link to="/signup">Don't have an account? Sign up</Link>
+          <Link to="/signup">Don't have an account? Sign up</Link>
         </div>
       </div>
-      
-      )
+
+    )
   }
   else {
-    return (<div>Logged in!</div>)
+    return (<div>Error...</div>)
   }
-
-  // return (
-  //   <div>
-  //     <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} className='login-form'>
-  //       <h3>SwampStream</h3>
-  //       <input type="text" placeholder='Username' />
-  //       <input type="text" placeholder='Password' />
-
-
-  //       <Link to="/home">Sign In</Link>
-  //     </form>
-
-  //   </div>
-  // )
 }
 
 export default Login

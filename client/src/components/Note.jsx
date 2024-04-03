@@ -1,16 +1,19 @@
 import React, {useState, useEffect} from "react";
 import { Button } from "react-bootstrap";
-
+import { useSession } from "../components/SessionContext";
 import supabase from "../config/supabaseClient";
 
 function Note({title, videoID, data}) {
   const [notes, setNotes] = useState(data)
+  const session = useSession()
 
   const handleSave = async () => {
     const {data, error} = await supabase
-    .from('Notes')
-    .update({Notes: notes})
+    .from('notes')
+    .update({content: notes})
     .eq('videoId', videoID)
+    .eq('profile_id', session.user.id)
+
     if(data){
       console.log('handlesave', data)
     }
