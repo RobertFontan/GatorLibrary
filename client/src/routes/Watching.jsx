@@ -7,7 +7,12 @@ import Transcript from '../components/Transcript';
 import DownloadComponent from '../components/DownloadComponent';
 import SaveButton from '../components/SaveButton';
 import AIComponent from '../components/AIComponent';
+import { Modal} from 'react-bootstrap';
+import QuizModal from '../components/QuizModal'; 
+
+/* Session */
 import { useSession } from '../components/SessionContext';
+
 
 /* Routing */
 import { useParams } from 'react-router-dom';
@@ -25,6 +30,7 @@ import { Container, Row, Col, Accordion, Button, Form } from 'react-bootstrap';
 function Watching() {
   const session = useSession();
   const {course ,videoID} = useParams()
+  const [showQuizModal, setShowQuizModal] = useState(false);
   const [comments, setComments] = useState([]);
 
 
@@ -224,15 +230,12 @@ function Watching() {
           </Accordion>
 
         </Col>
-        <Col className='right-screen'>
-          <div className='button-container'>
-            <Button className={sidebar === 'notes' ? 'active' : ''} onClick={() => handleClick('notes')}>
-              Notes
-            </Button>
-            <Button className={sidebar === 'transcript' ? 'active' : ''} onClick={() => handleClick('transcript')}>
-              Transcript
-            </Button>
-            <AIComponent />
+        <Col  className='right-screen'>
+          <div className="button-container">
+            <Button className={sidebar === "notes" ? "active": ""} onClick={()=> handleClick("notes")}>Notes</Button>
+            <Button className={sidebar === "transcript" ? "active": ""} onClick={() => handleClick("transcript")}>Transcript</Button>
+            <AIComponent onClick={() => setShowQuizModal(true)} />
+            <QuizModal videoId={videoID} showQuizModal={showQuizModal} setShowQuizModal={setShowQuizModal} />
           </div>
           <div className='sidebar'>{sidebar === 'transcript' ? <Transcript videoId={videoID} /> : <NotesSidebar pRef={playerRef} title={title} videoId={videoID} />}</div>
         </Col>

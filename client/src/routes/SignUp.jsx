@@ -60,7 +60,7 @@ const SignUp = () => {
 
 
       if(data)  {
-        navigate('/home')
+        navigate('/login')
       }
 
       if (error) {
