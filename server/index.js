@@ -41,17 +41,18 @@ app.post('/generate-questions', async (req, res) => {
       .select('content')
       .eq('video_id', videoID)
 
-    console.log('data', data, 'error', error)
+    // console.log('data', data, 'error', error)
 
 
-    if (data) {
-      console.log('data', data)
+    if (data.length != 0) {
+      console.log('DATA FROM SUPABASE', data)
       res.json({ summary: data[0].content });
     }
 
     else {
       const transcript = req.body.userContent;
-      const systemMessage = 'Generate a numbered list of multiple-choice questions with four options (A, B, C, D), one of which is denoted correct (using parenthesis) from the following content:'
+      const systemMessage = 'Generate a JSON list of multiple-choice questions with four options (A, B, C, D) and an answer property with the correct choice. Using the following content:'
+      // make JSON 
 
       // A) , B) 
       const completion = await openai.chat.completions.create({
@@ -72,18 +73,37 @@ app.post('/generate-questions', async (req, res) => {
         frequency_penalty: 0,
         presence_penalty: 0,
       });
-      console.log('received response from openai api', completion)
-      res.json({ summary: completion.choices[0].message.content });
+      console.log('DATA FROM AI', completion)
+      //res.json({ summary: completion.choices[0].message.content });
 
+
+      //const jsonString = completion.choices[0].message.content;
+
+      // Parse the JSON string to a JavaScript object
+
+      const jsonString = completion.choices[0].message.content.replace(/```json\n|```/g, '').trim();
+
+      let questions;
+      try {
+        questions = JSON.parse(jsonString);
+      } catch (error) {
+        console.error('Error parsing JSON string:', error);
+      }
+
+      // Now `questions` is a JavaScript object that you can work with
+      // For example, logging it to the console in a pretty format
+      console.log('UPLOADING TO OPENAI', JSON.stringify(questions, null, 2));
+      
+      res.json({ summary: questions});
 
       const { newData, err } = await supabase
         .from('quiz')
         .insert([{
           video_id: videoID,
-          content: completion.choices[0].message.content
+          content: questions
         }])
         .select()
-      console.log('data', newData, 'error', err)
+      // console.log('data', newData, 'error', err)
 
     }
 
