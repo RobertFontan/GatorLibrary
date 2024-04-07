@@ -578,3 +578,25 @@
   text-align: center !important;
   margin: 0px !important;
 }
+.my-button {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  /* Optional: Add a border for better visibility */
+  padding: 5px 10px;
+  /* Optional: Adjust padding for better button appearance */
+  cursor: pointer;
+}
+
+.button-spacing {
+  height: 10px;
+}
+
+.DCbutton {
+  background-color: transparent;
+  /* No background color */
+  border: none;
+  /* No border */
+  color: black;
+  /* Text color */
+}
