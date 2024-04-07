@@ -33,7 +33,7 @@ app.post('/generate-questions', async (req, res) => {
 
 
 
-  console.log(videoID)
+  console.log('generating with the following', videoID)
   try {
 
     const { data, error } = await supabase
@@ -50,7 +50,25 @@ app.post('/generate-questions', async (req, res) => {
     }
 
     else {
-      const transcript = req.body.userContent;
+
+      let transcript = '';
+
+      // get the transcript from supabase
+      const {transcriptData, error} = await supabase
+        .from('notes')
+        .select('transcript')
+        .eq('videoId', videoID)
+        .single()
+
+      if(transcriptData) {
+        console.log('transctipy data', transcriptData)
+        transcript = transcriptData.transcript
+      }
+      else {
+        console.log('error', error)
+        res.status(500).send('Error generating transcript'); 
+        
+      }
       const systemMessage = 'Generate a JSON list of multiple-choice questions with four options (A, B, C, D) and an answer property with the correct choice. Using the following content:'
       // make JSON 
 
