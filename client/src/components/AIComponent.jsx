@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Offcanvas } from 'react-bootstrap';
 import { Robot } from 'react-bootstrap-icons';
-import Summarize from './Summarize';
-import Questions from './Questions';
-import Bullet from './Bullet';
+
 
 // Updated AIComponent to accept an onClick prop
 function AIComponent({ onClick }) {
