@@ -3,14 +3,27 @@ import './Pomodoro.css'; // Import CSS file for Pomodoro styling
 import img1 from '../images/img1.jpeg';
 import img2 from '../images/img2.jpeg';
 import img3 from '../images/img3.jpeg';
+import FocusQuestion from '../components/FocusQuestion';
+import supabase from '../config/supabaseClient'
+import { useSession } from '../components/SessionContext'
+
 
 function Pomodoro() {
+  const session = useSession()
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState(img1); // Default background image
   const [inputMinutes, setInputMinutes] = useState('');
   const [inputSeconds, setInputSeconds] = useState('');
+  const [todos, setTodos] = useState([]); 
+
+  const [submittedFocus, setSubmittedFocus] = useState(''); // State to store submitted focus
+
+  // Function to handle submission of focus from the FocusQuestion component
+  const handleFocusSubmit = (focus) => {
+    setSubmittedFocus(focus);
+  };
 
   const startTimer = () => {
     setIsRunning(true);
@@ -40,6 +53,26 @@ function Pomodoro() {
     setInputMinutes('');
     setInputSeconds('');
   };
+
+   // Function to fetch todos from Supabase
+   const fetchTodos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('todos')
+        .select('*')
+        .eq('user_id', session.user.id);
+      if (error) throw error;
+      setTodos(data);
+      console.log('Complete');
+    } catch (error) {
+      console.error('Error fetching todos:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch todos when component mounts
+    fetchTodos();
+  }, []);
 
   useEffect(() => {
     let interval;
@@ -100,6 +133,28 @@ function Pomodoro() {
           <button type="submit">Set Custom Time</button>
         </form>
       </div>
+      <div className="todos-container">
+            {/* Focus question component */}
+            <FocusQuestion onSubmit={handleFocusSubmit} />
+        {/* Your other components... */}
+     
+      {/* Display submitted focus */}
+      {submittedFocus && (
+        <div className="submitted-focus">
+          <p>Your focus for today: {submittedFocus}</p>
+       
+        </div>
+      )}
+
+<br /> 
+
+          <h4>Todos</h4>
+          <ul>
+            {todos.map(todo => (
+              <li key={todo.id}>{todo.todo}</li>
+            ))}
+          </ul>
+        </div>
     </div>
   );
 }

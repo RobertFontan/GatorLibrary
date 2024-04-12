@@ -41,6 +41,7 @@ function NavBar() {
       <NavLink className={splitLocation[1] === "saved" ? "active" : ""} to="/saved">SAVED VIDEOS</NavLink>
       <NavLink className={splitLocation[1] === "profile" ? "active" : ""} to="/profile">PROFILE</NavLink>
 
+
       {session && (
         <div className="sign-out-container">
           <button className="sign-out-button" onClick={handleSignOut}>

@@ -149,13 +149,18 @@ function Watching() {
         throw profileError;
       }
       const fullName = userProfile ? userProfile.full_name : 'Unknown';
+      
+      // Get current timestamp
+      const timestamp = new Date().toLocaleString();
+  
       const { data: commentData, error: commentError } = await supabase
         .from('comments')
         .insert({
           video_id: videoID,
           user_id: session.user.id,
           fullName: fullName,
-          comment_text: commentText
+          comment_text: commentText,
+          timestamp: timestamp // Include timestamp in the comment data
         });
       if (commentError) {
         throw commentError;
@@ -167,6 +172,15 @@ function Watching() {
       console.error('Error submitting comment:', error.message);
     }
   };
+
+  const handleClickTimestamp = (timestamp) => {
+    if (playerRef.current) {
+      const [minutes, seconds] = timestamp.split(':').map(parseFloat);
+      const totalSeconds = minutes * 60 + seconds;
+      playerRef.current.seekTo(totalSeconds);
+    }
+  };
+  
 
 
 
@@ -192,15 +206,29 @@ function Watching() {
               <Accordion.Header>Comments</Accordion.Header>
               <Accordion.Body>
               <div style={{ marginBottom: '20px' }}>
-    {comments.length > 0 ? (
-      comments.map((comment, index) => (
-        <div key={index}>
-          <strong>{comment.fullName}</strong>: {comment.comment_text}
+              {comments.length > 0 ? (
+  comments.map((comment, index) => (
+    <div key={index}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div>
+        <strong>{comment.fullName}</strong>:&nbsp;
+          {comment.comment_text.split(/(\d+:\d+)/g).map((text, index) =>
+            /\d+:\d+/.test(text) ? (
+              <span key={index} style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleClickTimestamp(text)}>
+                {text}
+              </span>
+            ) : (
+              <span key={index}>{text}</span>
+            )
+          )}
         </div>
-      ))
-    ) : (
-      <p>No comments yet.</p>
-    )}
+        <div style={{ marginLeft: 'auto' }}>{comment.timestamp}</div>
+      </div>
+    </div>
+  ))
+) : (
+  <p>No comments yet.</p>
+)}
     </div>
                 <Form onSubmit={handleCommentSubmit}>
                   <Form.Group controlId="commentTextarea">
