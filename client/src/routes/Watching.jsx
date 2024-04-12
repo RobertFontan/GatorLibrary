@@ -200,12 +200,12 @@ function Watching() {
           <Accordion flush alwaysOpen>
             <Accordion.Item eventKey='0'>
               <Accordion.Header>Description</Accordion.Header>
-              <Accordion.Body>{description && <div id='description'>{description}</div>}</Accordion.Body>
+              <Accordion.Body><div id='description' style={{fontSize: '14px'}}>{description}</div></Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey='1'>
               <Accordion.Header>Comments</Accordion.Header>
               <Accordion.Body>
-              <div style={{ marginBottom: '20px' }}>
+              <div style={{ marginBottom: '20px', fontSize: '14px' }}>
               {comments.length > 0 ? (
   comments.map((comment, index) => (
     <div key={index}>
@@ -238,11 +238,12 @@ function Watching() {
                       value={commentText}
                       onChange={(e) => setCommentText(e.target.value)}
                       placeholder="Write your comment here..."
+                      style={{fontSize: '14px'}}
                     />
                   </Form.Group>
                   <div style={{ marginBottom: '10px' }}> </div>
                   <div style={{ textAlign: 'right' }}>
-                  <Button variant="primary" type="submit">
+                  <Button variant="primary" type="submit" style={{fontSize: '14px'}}>
                     Submit
                   </Button>
                   </div>
@@ -254,10 +255,10 @@ function Watching() {
         </Col>
         <Col className='right-screen'>
           <div className='button-container'>
-            <Button className={sidebar === 'notes' ? 'active' : ''} onClick={() => handleClick('notes')}>
+            <Button className={sidebar === 'notes' ? 'active' : ''} onClick={() => handleClick('notes')} style={{fontSize: '14px'}}>
               Notes
             </Button>
-            <Button className={sidebar === 'transcript' ? 'active' : ''} onClick={() => handleClick('transcript')}>
+            <Button className={sidebar === 'transcript' ? 'active' : ''} onClick={() => handleClick('transcript')} style={{fontSize: '14px'}}>
               Transcript
             </Button>
             <AIComponent />
@@ -267,8 +268,8 @@ function Watching() {
       </Row>
     </Container>
   </>
-     
-  )
+  );
 }
+
 
 export default Watching
