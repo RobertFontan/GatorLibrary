@@ -1,4 +1,5 @@
 
+
 .button-spacing {
   height: 10px;
 }
@@ -16,6 +17,12 @@
   right: 20px;
 }
 
+.profile-picture-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .profile-picture {
   width: 150px;
   height: 150px;
@@ -26,6 +33,7 @@
   justify-content: center;
   background-size: cover;
   background-position: center;
+
 }
 
 
@@ -133,14 +141,25 @@
   right: 10px;
 }
 
+.change-bg-button-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .change-bg-button {
-  position: absolute;
-  bottom: 0px; 
-  left: 0px;
+  position: fixed;
+  bottom: 0;
+  left: 14px;
   background-color: #ffffff; 
-  padding: 10px;
+  padding: 6px; /* Adjust padding to make it smaller */
+  font-size: 14px; /* Adjust font size */
   cursor: pointer;
 }
+
 
 
 .todo-box {
@@ -207,4 +226,43 @@
 .todo-item button:hover {
   background-color: #c82333; 
 }
+
+
+@media only screen and (max-width: 600px) {
+  .user-profile {
+    width: calc(100% - 40px); /* Adjust width */
+    max-width: none;
+    right: 20px; /* Adjust positioning */
+  }
+}
+
+/* For screens smaller than 400px */
+@media only screen and (max-width: 400px) {
+  .user-profile {
+    padding: 10px; /* Adjust padding */
+  }
+}
+
+/* For screens smaller than 320px */
+@media only screen and (max-width: 320px) {
+  .user-profile {
+    top: 10px; /* Adjust positioning */
+    right: 10px; /* Adjust positioning */
+  }
+}
+
+/* MyComponent.css */
+
+.my-button {
+    background-color: white;
+    color: black;
+    border: 1px solid black; /* Optional: Add a border for better visibility */
+    padding: 5px 10px; /* Optional: Adjust padding for better button appearance */
+    cursor: pointer;
+  }
+  
+  .button-spacing {
+    height: 10px;
+  }
+  
 
