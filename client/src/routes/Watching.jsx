@@ -8,7 +8,12 @@ import Transcript from '../components/Transcript';
 import DownloadComponent from '../components/DownloadComponent';
 import SaveButton from '../components/SaveButton';
 import AIComponent from '../components/AIComponent';
+import { Modal} from 'react-bootstrap';
+import QuizModal from '../components/QuizModal'; 
+
+/* Session */
 import { useSession } from '../components/SessionContext';
+
 
 /* Routing */
 import { useParams } from 'react-router-dom';
@@ -26,6 +31,7 @@ import { Container, Row, Col, Accordion, Button, Form } from 'react-bootstrap';
 function Watching() {
   const session = useSession();
   const {course ,videoID} = useParams()
+  const [showQuizModal, setShowQuizModal] = useState(false);
   const [comments, setComments] = useState([]);
 
 
@@ -278,6 +284,7 @@ function Watching() {
   );
   
   
+
 }
 
 
