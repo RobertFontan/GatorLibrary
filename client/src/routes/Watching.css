@@ -1,0 +1,13 @@
+/* styles.css */
+
+.comment-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px; /* Adjust spacing between comments */
+  }
+  
+  .comment-timestamp {
+    color: #999; /* Adjust timestamp color */
+  }
+  
+  

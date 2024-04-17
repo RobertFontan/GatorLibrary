@@ -78,6 +78,7 @@
   width: 100%;
   /*margin: 10px 10px 10px 10px;*/
   transition: 0.2s;
+  font-size: 18px;
   font-weight: 200;
 }
 .nav a:hover{
@@ -232,6 +233,7 @@
   background-color: #0a0a0a;
 }
 .watching .btn{
+  font-size: 17px;
   border-radius: 15px;
   background-color: var(--btn-color);
   color: black;
@@ -297,7 +299,6 @@
   /* outline: none; */
   /* background-color: transparent; */
   color: #000000;
-  font-size: large;
 }
 /* Description */
 
@@ -305,10 +306,12 @@
   padding: 20px;
   background-color: #eeeeee;
   border-radius: 20px;
+  font-size: 10px;
 }
 
 /* Comments */
 .comments{
+  font-size: 17px;
   height: 1000px;
 }
 .comment{
@@ -325,6 +328,7 @@
 }
 
 .comment .user{
+  font-size: 15px;
   font-weight: bold;
 }
 

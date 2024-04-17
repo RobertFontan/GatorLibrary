@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef} from 'react'
 import Youtube from 'react-youtube'
+import './Watching.css';
 
 /* Components */
 import NotesSidebar from '../components/NotesSidebar';
@@ -184,37 +185,43 @@ function Watching() {
 
 
 
+
+
   return (  
     <>
-    <Container fluid className='watching'>
-      <Row>
-        <Col lg={6} className='left-screen'>
-          <div className='video-player'>
-            <Youtube videoId={videoID} opts={opts} onReady={onReady} />
-            <div className='header'>
-              <h3>{title}</h3>
-              <DownloadComponent videoId={videoID} />
-              <SaveButton title={title} videoID={videoID} videoData={videoData} saveData={saveData} />
+      <Container fluid className='watching'>
+        <Row>
+          <Col lg={6} className='left-screen'>
+            <div className='video-player'>
+              <Youtube videoId={videoID} opts={opts} onReady={onReady} />
+              <div className='header'>
+                <h2>{title}</h2>
+                <DownloadComponent videoId={videoID} />
+                <SaveButton title={title} videoID={videoID} videoData={videoData} saveData={saveData} />
+              </div>
             </div>
-          </div>
-          <Accordion flush alwaysOpen>
-            <Accordion.Item eventKey='0'>
-              <Accordion.Header>Description</Accordion.Header>
-              <Accordion.Body><div id='description' style={{fontSize: '14px'}}>{description}</div></Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey='1'>
-              <Accordion.Header>Comments</Accordion.Header>
-              <Accordion.Body>
-              <div style={{ marginBottom: '20px', fontSize: '14px' }}>
-              {comments.length > 0 ? (
-  comments.map((comment, index) => (
-    <div key={index}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div>
-        <strong>{comment.fullName}</strong>:&nbsp;
+            <Accordion flush alwaysOpen>
+              <Accordion.Item eventKey='0'>
+              <Accordion.Header className='accordion-title'>Description</Accordion.Header>
+                <Accordion.Body><div id='description'>{description}</div></Accordion.Body>
+              </Accordion.Item>
+              <Accordion.Item eventKey='1'>
+              <Accordion.Header className='accordion-title'>Comments</Accordion.Header>
+                <Accordion.Body className='comments'>
+                {comments.length > 0 ? (
+  comments
+    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)) // Sort comments by timestamp
+    .map((comment, index) => (
+      <div key={index} className="comment-container">
+        <div className="comment-text">
+          <strong>{comment.fullName}</strong>:&nbsp;
           {comment.comment_text.split(/(\d+:\d+)/g).map((text, index) =>
             /\d+:\d+/.test(text) ? (
-              <span key={index} style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleClickTimestamp(text)}>
+              <span
+                key={index}
+                style={{ color: 'blue', cursor: 'pointer' }}
+                onClick={() => handleClickTimestamp(text)}
+              >
                 {text}
               </span>
             ) : (
@@ -222,53 +229,55 @@ function Watching() {
             )
           )}
         </div>
-        <div style={{ marginLeft: 'auto' }}>{comment.timestamp}</div>
+        <div className="comment-timestamp">{comment.timestamp}</div>
       </div>
-    </div>
-  ))
+    ))
 ) : (
   <p>No comments yet.</p>
 )}
-    </div>
-                <Form onSubmit={handleCommentSubmit}>
-                  <Form.Group controlId="commentTextarea">
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      value={commentText}
-                      onChange={(e) => setCommentText(e.target.value)}
-                      placeholder="Write your comment here..."
-                      style={{fontSize: '14px'}}
-                    />
-                  </Form.Group>
-                  <div style={{ marginBottom: '10px' }}> </div>
-                  <div style={{ textAlign: 'right' }}>
-                  <Button variant="primary" type="submit" style={{fontSize: '14px'}}>
-                    Submit
-                  </Button>
-                  </div>
-                </Form>
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
 
-        </Col>
-        <Col className='right-screen'>
-          <div className='button-container'>
-            <Button className={sidebar === 'notes' ? 'active' : ''} onClick={() => handleClick('notes')} style={{fontSize: '14px'}}>
-              Notes
-            </Button>
-            <Button className={sidebar === 'transcript' ? 'active' : ''} onClick={() => handleClick('transcript')} style={{fontSize: '14px'}}>
-              Transcript
-            </Button>
-            <AIComponent />
-          </div>
-          <div className='sidebar'>{sidebar === 'transcript' ? <Transcript videoId={videoID} /> : <NotesSidebar pRef={playerRef} title={title} videoId={videoID} />}</div>
-        </Col>
-      </Row>
-    </Container>
-  </>
+<Form onSubmit={handleCommentSubmit}>
+  <Form.Group controlId="commentTextarea" style={{ position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      <Form.Control
+        as="textarea"
+        rows={3}
+        value={commentText}
+        onChange={(e) => setCommentText(e.target.value)}
+        placeholder="Write your comment here..."
+        style={{ fontSize: '15px' }}
+      />
+      <div style={{ marginTop: '10px', alignSelf: 'flex-end' }}>
+        <Button variant="primary" type="submit" className='button'>
+          Submit
+        </Button>
+      </div>
+    </div>
+  </Form.Group>
+</Form>
+
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </Col>
+          <Col className='right-screen'>
+            <div className='button-container'>
+              <Button className={sidebar === 'notes' ? 'active button' : 'button'} onClick={() => handleClick('notes')}>
+                Notes
+              </Button>
+              <Button className={sidebar === 'transcript' ? 'active button' : 'button'} onClick={() => handleClick('transcript')}>
+                Transcript
+              </Button>
+              <AIComponent />
+            </div>
+            <div className='sidebar'>{sidebar === 'transcript' ? <Transcript videoId={videoID} /> : <NotesSidebar pRef={playerRef} title={title} videoId={videoID} />}</div>
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
+  
+  
 }
 
 
