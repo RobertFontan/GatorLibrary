@@ -15,7 +15,7 @@ function FocusQuestion({ onSubmit }) {
 
   return (
     <div>
-      <h3>What is your main focus for today?</h3>
+      <h5>What is your main focus for today?</h5>
       <form onSubmit={handleSubmit}>
       <input 
   type="text" 
@@ -30,7 +30,7 @@ function FocusQuestion({ onSubmit }) {
           type="submit" 
           style={{
             padding: '10px 20px',
-            fontSize: '16px',
+            fontSize: '14px',
             border: 'none',
             borderRadius: '5px',
             cursor: 'pointer',

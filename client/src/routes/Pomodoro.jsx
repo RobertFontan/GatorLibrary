@@ -1,24 +1,24 @@
+
 import React, { useState, useEffect } from 'react';
 import './Pomodoro.css'; // Import CSS file for Pomodoro styling
 import img1 from '../images/img1.jpeg';
 import img2 from '../images/img2.jpeg';
 import img3 from '../images/img3.jpeg';
 import FocusQuestion from '../components/FocusQuestion';
-import supabase from '../config/supabaseClient'
-import { useSession } from '../components/SessionContext'
-
+import supabase from '../config/supabaseClient';
+import { useSession } from '../components/SessionContext';
 
 function Pomodoro() {
-  const session = useSession()
+  const session = useSession();
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState(img1); // Default background image
   const [inputMinutes, setInputMinutes] = useState('');
   const [inputSeconds, setInputSeconds] = useState('');
-  const [todos, setTodos] = useState([]); 
-
+  const [todos, setTodos] = useState([]);
   const [submittedFocus, setSubmittedFocus] = useState(''); // State to store submitted focus
+  const [motivationalQuote, setMotivationalQuote] = useState('');
 
   // Function to handle submission of focus from the FocusQuestion component
   const handleFocusSubmit = (focus) => {
@@ -37,7 +37,7 @@ function Pomodoro() {
     if (backgroundImage === img1) {
       setBackgroundImage(img2);
     } else if (backgroundImage === img2) {
-      setBackgroundImage(img3); 
+      setBackgroundImage(img3);
     } else {
       setBackgroundImage(img1);
     }
@@ -54,8 +54,7 @@ function Pomodoro() {
     setInputSeconds('');
   };
 
-   // Function to fetch todos from Supabase
-   const fetchTodos = async () => {
+  const fetchTodos = async () => {
     try {
       const { data, error } = await supabase
         .from('todos')
@@ -69,9 +68,22 @@ function Pomodoro() {
     }
   };
 
+  // Fetch a random motivational quote from the Quotable API
+  const fetchMotivationalQuote = async () => {
+    try {
+      const response = await fetch('https://api.quotable.io/random');
+      const data = await response.json();
+      setMotivationalQuote(data.content);
+    } catch (error) {
+      console.error('Error fetching motivational quote:', error.message);
+    }
+  };
+
   useEffect(() => {
     // Fetch todos when component mounts
     fetchTodos();
+    // Fetch a motivational quote when component mounts
+    fetchMotivationalQuote();
   }, []);
 
   useEffect(() => {
@@ -98,7 +110,8 @@ function Pomodoro() {
 
   return (
     <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', minHeight: '100vh' }}>
-    <div className="pomodoro-container"> {/* Container for the entire Pomodoro component */}
+      <div className="pomodoro-container">
+        {/* Container for the entire Pomodoro component */}
         <div className="timer-box">
           <h4>Pomodoro Timer</h4>
           <div className="timer">
@@ -111,50 +124,49 @@ function Pomodoro() {
               <button className="stop-button" onClick={stopTimer}>Stop</button>
             )}
           </div>
+          <form className="custom-time-form" onSubmit={handleCustomTimeSubmit}>
+            <input 
+              type="number" 
+              placeholder="Minutes" 
+              value={inputMinutes} 
+              onChange={(e) => setInputMinutes(e.target.value)} 
+            />
+            <input 
+              type="number" 
+              placeholder="Seconds" 
+              value={inputSeconds} 
+              onChange={(e) => setInputSeconds(e.target.value)} 
+            />
+            <button type="submit">Set Custom Time</button>
+          </form>
         </div>
         <div className="change-bg-button-container">
           <button className="change-bg-button" onClick={handleBackgroundImageChange}>
             Change Background Image
           </button>
         </div>
-        <form className="custom-time-form" onSubmit={handleCustomTimeSubmit}>
-          <input 
-            type="number" 
-            placeholder="Minutes" 
-            value={inputMinutes} 
-            onChange={(e) => setInputMinutes(e.target.value)} 
-          />
-          <input 
-            type="number" 
-            placeholder="Seconds" 
-            value={inputSeconds} 
-            onChange={(e) => setInputSeconds(e.target.value)} 
-          />
-          <button type="submit">Set Custom Time</button>
-        </form>
-      </div>
-      <div className="todos-container">
-            {/* Focus question component */}
-            <FocusQuestion onSubmit={handleFocusSubmit} />
-        {/* Your other components... */}
-     
-      {/* Display submitted focus */}
-      {submittedFocus && (
-        <div className="submitted-focus">
-          <p>Your focus for today: {submittedFocus}</p>
-       
-        </div>
-      )}
-
-<br /> 
-
+        <div className="todos-container">
+          {/* Focus question component */}
+          <FocusQuestion onSubmit={handleFocusSubmit} />
+          {/* Display submitted focus */}
+          {submittedFocus && (
+            <div className="submitted-focus">
+              <p>Your focus for today: {submittedFocus}</p>
+            </div>
+          )}
+          <br />
           <h4>Todos</h4>
           <ul>
             {todos.map(todo => (
               <li key={todo.id}>{todo.todo}</li>
             ))}
           </ul>
+
+          <br />
+          <h4>Quote of the Day</h4>
+          <p>{motivationalQuote}</p>
         </div>
+      </div>
     </div>
   );
 }

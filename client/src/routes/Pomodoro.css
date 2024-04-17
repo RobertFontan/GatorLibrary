@@ -44,7 +44,7 @@
       
       .start-button, .stop-button, .change-bg-button, .custom-time-form button[type="submit"] {
         padding: 10px 20px;
-        font-size: 16px;
+        font-size: 12px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
@@ -73,6 +73,7 @@
         display: flex;
         justify-content: center;
         margin-top: 20px;
+        font-size: 12px;
       }
       
       .custom-time-form input[type="number"] {
@@ -81,10 +82,12 @@
         padding: 5px;
         border: 1px solid #ccc;
         border-radius: 5px;
+        font-size: 8px;
       }
       
       .todos-container h4 {
         margin-bottom: 10px;
+     
       }
       
       .todos-container ul {
@@ -138,6 +141,7 @@
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 12px; 
   }
   
   .custom-time-form button[type="submit"] {
@@ -170,5 +174,4 @@
   .todos-container li {
     margin-bottom: 5px;
   }
-  
   
