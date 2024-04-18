@@ -7,6 +7,7 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoId }) => {
     const [quizData, setQuizData] = useState([]);
     const [userAnswers, setUserAnswers] = useState({});
     const [submitted, setSubmitted] = useState(false);
+    const [score, setScore] = useState(null);
 
     useEffect(() => {
         async function fetchQuestions() {
@@ -55,8 +56,37 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoId }) => {
         setUserAnswers(prev => ({ ...prev, [questionIndex]: option }));
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         setSubmitted(true);
+        const percentageScore = calculateScore(); 
+        setScore(percentageScore); 
+        try {
+            const { data, error } = await supabase
+                .from('quiz_results')
+                .insert([{
+                    video_id: videoId,
+                    user_id: userId,
+                    answers: JSON.stringify(userAnswers),
+                    score: percentageScore,  
+                    timestamp: new Date().toISOString()
+                }]);
+
+            if (error) throw error;
+            console.log('Quiz results saved:', data);
+        } catch (error) {
+            console.error('Failed to save quiz results:', error.message);
+        }
+    };
+
+      const calculateScore = () => {
+        const totalQuestions = quizData.length;
+        let correctAnswers = 0;
+        quizData.forEach((question, index) => {
+            if (userAnswers[index] === question.answer) {
+                correctAnswers += 1;
+            }
+        });
+        return (correctAnswers / totalQuestions) * 100;  
     };
 
     const renderQuizQuestions = () => {
@@ -92,9 +122,17 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoId }) => {
                 <Modal.Title>Quiz Time</Modal.Title>
             </Modal.Header>
             <Modal.Body>{renderQuizQuestions()}</Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowQuizModal(false)}>Close</Button>
-                {!submitted && <Button variant="primary" onClick={handleSubmit}>Submit Answers</Button>}
+            <Modal.Footer className="justify-content-between">
+                {!submitted ? (
+                    <div style={{ width: '100%', textAlign: 'center' }}> 
+                        <Button variant="primary" onClick={handleSubmit}>Submit Answers</Button>
+                    </div>
+                    ) : (
+                    <>
+                        <p style={{ flex: 1 }}>Your score: {score ? `${score.toFixed(2)}%` : ''}</p>
+                        <Button variant="secondary" onClick={() => setShowQuizModal(false)}>Close</Button>
+                    </>
+                 )}
             </Modal.Footer>
         </Modal>
     );
