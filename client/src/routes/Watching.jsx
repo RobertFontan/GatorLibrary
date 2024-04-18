@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Youtube from 'react-youtube'
 import './Watching.css';
 
@@ -8,8 +8,8 @@ import Transcript from '../components/Transcript';
 import DownloadComponent from '../components/DownloadComponent';
 import SaveButton from '../components/SaveButton';
 import AIComponent from '../components/AIComponent';
-import { Modal} from 'react-bootstrap';
-import QuizModal from '../components/QuizModal'; 
+import { Modal } from 'react-bootstrap';
+import QuizModal from '../components/QuizModal';
 
 /* Session */
 import { useSession } from '../components/SessionContext';
@@ -30,7 +30,7 @@ import { Container, Row, Col, Accordion, Button, Form } from 'react-bootstrap';
 
 function Watching() {
   const session = useSession();
-  const {course ,videoID} = useParams()
+  const { course, videoID } = useParams()
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [comments, setComments] = useState([]);
 
@@ -41,15 +41,15 @@ function Watching() {
   const [description, setDescription] = useState(null)
   const [title, setTitle] = useState(null)
   const [sidebar, setSidebar] = useState("notes")
-  
-  
+
+
   const [saveData, setSaveData] = useState([])
 
 
 
   const [commentText, setCommentText] = useState('');
 
-  
+
   const opts = {
     height: '390',
     width: '640',
@@ -63,9 +63,9 @@ function Watching() {
   const fetchURL = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${videoID}&key=${API_KEY}`
 
   const fetchData = async () => {
-    const {data, error} = await axios.get(newFetchURL)
+    const { data, error } = await axios.get(newFetchURL)
     console.log('made it here')
-    if(data){
+    if (data) {
       console.log('NEW', data)
       console.log('watching data', data.items[0].snippet)
 
@@ -76,10 +76,10 @@ function Watching() {
       setTitle(data.items[0].snippet.title)
       setDescription(data.items[0].snippet.description)
     }
-    if(error){
+    if (error) {
       console.log('watching error', error)
     }
-    
+
     // get content duration, date (easy), course title (hard)
   }
 
@@ -94,16 +94,16 @@ function Watching() {
 
   // send video object to database
   const handleVideoSave = async () => {
-    
+
     // this sends video to database 
-    const {data, error} = await supabase
-    .from('Saved')
-    .insert({ 'videoId': videoID, 'title': title, 'thumbnail': videoData.thumbnails.medium.url })
-    
-    if(data){
+    const { data, error } = await supabase
+      .from('Saved')
+      .insert({ 'videoId': videoID, 'title': title, 'thumbnail': videoData.thumbnails.medium.url })
+
+    if (data) {
       console.log(data)
     }
-    if(error){
+    if (error) {
       alert('Already saved (this will be updated :p)')
       console.log('error', error)
     }
@@ -112,13 +112,13 @@ function Watching() {
   /* TIMESTAMP */
 
   const playerRef = useRef()
-  const onReady = (e) =>{
+  const onReady = (e) => {
     playerRef.current = e.target
   }
 
   // maybe send to save data base
-  const timeStampClick = (seconds) =>{
-    if(playerRef.current){
+  const timeStampClick = (seconds) => {
+    if (playerRef.current) {
       playerRef.current.seekTo(seconds)
     }
   }
@@ -156,10 +156,10 @@ function Watching() {
         throw profileError;
       }
       const fullName = userProfile ? userProfile.full_name : 'Unknown';
-      
+
       // Get current timestamp
       const timestamp = new Date().toLocaleString();
-  
+
       const { data: commentData, error: commentError } = await supabase
         .from('comments')
         .insert({
@@ -187,13 +187,13 @@ function Watching() {
       playerRef.current.seekTo(totalSeconds);
     }
   };
-  
 
 
 
 
 
-  return (  
+
+  return (
     <>
       <Container fluid className='watching'>
         <Row>
@@ -208,59 +208,59 @@ function Watching() {
             </div>
             <Accordion flush alwaysOpen>
               <Accordion.Item eventKey='0'>
-              <Accordion.Header className='accordion-title'>Description</Accordion.Header>
+                <Accordion.Header className='accordion-title'>Description</Accordion.Header>
                 <Accordion.Body><div id='description'>{description}</div></Accordion.Body>
               </Accordion.Item>
               <Accordion.Item eventKey='1'>
-              <Accordion.Header className='accordion-title'>Comments</Accordion.Header>
+                <Accordion.Header className='accordion-title'>Comments</Accordion.Header>
                 <Accordion.Body className='comments'>
-                {comments.length > 0 ? (
-  comments
-    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)) // Sort comments by timestamp
-    .map((comment, index) => (
-      <div key={index} className="comment-container">
-        <div className="comment-text">
-          <strong>{comment.fullName}</strong>:&nbsp;
-          {comment.comment_text.split(/(\d+:\d+)/g).map((text, index) =>
-            /\d+:\d+/.test(text) ? (
-              <span
-                key={index}
-                style={{ color: 'blue', cursor: 'pointer' }}
-                onClick={() => handleClickTimestamp(text)}
-              >
-                {text}
-              </span>
-            ) : (
-              <span key={index}>{text}</span>
-            )
-          )}
-        </div>
-        <div className="comment-timestamp">{comment.timestamp}</div>
-      </div>
-    ))
-) : (
-  <p>No comments yet.</p>
-)}
+                  {comments.length > 0 ? (
+                    comments
+                      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)) // Sort comments by timestamp
+                      .map((comment, index) => (
+                        <div key={index} className="comment-container">
+                          <div className="comment-text">
+                            <strong>{comment.fullName}</strong>:&nbsp;
+                            {comment.comment_text.split(/(\d+:\d+)/g).map((text, index) =>
+                              /\d+:\d+/.test(text) ? (
+                                <span
+                                  key={index}
+                                  style={{ color: 'blue', cursor: 'pointer' }}
+                                  onClick={() => handleClickTimestamp(text)}
+                                >
+                                  {text}
+                                </span>
+                              ) : (
+                                <span key={index}>{text}</span>
+                              )
+                            )}
+                          </div>
+                          <div className="comment-timestamp">{comment.timestamp}</div>
+                        </div>
+                      ))
+                  ) : (
+                    <p>No comments yet.</p>
+                  )}
 
-<Form onSubmit={handleCommentSubmit}>
-  <Form.Group controlId="commentTextarea" style={{ position: 'relative' }}>
-    <div style={{ display: 'flex', flexDirection: 'column', position: 'relative' }}>
-      <Form.Control
-        as="textarea"
-        rows={3}
-        value={commentText}
-        onChange={(e) => setCommentText(e.target.value)}
-        placeholder="Write your comment here..."
-        style={{ fontSize: '15px' }}
-      />
-      <div style={{ marginTop: '10px', alignSelf: 'flex-end' }}>
-        <Button variant="primary" type="submit" className='button'>
-          Submit
-        </Button>
-      </div>
-    </div>
-  </Form.Group>
-</Form>
+                  <Form onSubmit={handleCommentSubmit}>
+                    <Form.Group controlId="commentTextarea" style={{ position: 'relative' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          value={commentText}
+                          onChange={(e) => setCommentText(e.target.value)}
+                          placeholder="Write your comment here..."
+                          style={{ fontSize: '15px' }}
+                        />
+                        <div style={{ marginTop: '10px', alignSelf: 'flex-end' }}>
+                          <Button variant="primary" type="submit" className='button'>
+                            Submit
+                          </Button>
+                        </div>
+                      </div>
+                    </Form.Group>
+                  </Form>
 
                 </Accordion.Body>
               </Accordion.Item>
@@ -274,7 +274,8 @@ function Watching() {
               <Button className={sidebar === 'transcript' ? 'active button' : 'button'} onClick={() => handleClick('transcript')}>
                 Transcript
               </Button>
-              <AIComponent />
+              <AIComponent onClick={() => setShowQuizModal(true)} />
+              <QuizModal videoId={videoID} showQuizModal={showQuizModal} setShowQuizModal={setShowQuizModal} />
             </div>
             <div className='sidebar'>{sidebar === 'transcript' ? <Transcript videoId={videoID} /> : <NotesSidebar pRef={playerRef} title={title} videoId={videoID} />}</div>
           </Col>
@@ -282,8 +283,8 @@ function Watching() {
       </Container>
     </>
   );
-  
-  
+
+
 
 }
 
