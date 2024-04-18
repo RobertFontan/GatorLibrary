@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import supabase from '../config/supabaseClient';
+import './QuizModal.css'
 
 const QuizModal = ({ showQuizModal, setShowQuizModal, videoId }) => {
     const [quizData, setQuizData] = useState([]);
@@ -53,7 +54,10 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoId }) => {
     
 
     const handleOptionChange = (questionIndex, option) => {
-        setUserAnswers(prev => ({ ...prev, [questionIndex]: option }));
+        setUserAnswers(prev => ({
+            ...prev,
+            [questionIndex]: option 
+        }));
     };
 
     const handleSubmit = async () => {
@@ -62,13 +66,12 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoId }) => {
         setScore(percentageScore); 
         try {
             const { data, error } = await supabase
-                .from('quiz_results')
+                .from('results')
                 .insert([{
                     video_id: videoId,
                     user_id: userId,
                     answers: JSON.stringify(userAnswers),
                     score: percentageScore,  
-                    timestamp: new Date().toISOString()
                 }]);
 
             if (error) throw error;
@@ -94,23 +97,24 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoId }) => {
             return <p>Loading questions...</p>;
         }
         return quizData.map((question, index) => (
-            <div key={index}>
+            <div key={index} style={{ paddingTop: index !== 0 ? '10px' : '0' }}>
                 <p>{question.question}</p>
                 <Form>
                     {Object.entries(question.options).map(([key, value]) => (
                         <Form.Check 
-                            key={key}
-                            type="radio"
-                            name={`question-${index}`}
-                            id={`${index}-${key}`}
-                            label={`${key}: ${value}`}
-                            onChange={() => handleOptionChange(index, key)}
-                            checked={userAnswers[index] === key}
-                            disabled={submitted}
-                        />
+                        key={key}
+                        className="custom-radio"
+                        type="radio"
+                        name={`question-${index}`}
+                        id={`${index}-${key}`}
+                        label={key + ": " + value}
+                        onChange={() => handleOptionChange(index, key)}
+                        checked={userAnswers[index] === key}
+                        disabled={submitted}
+                   />                     
                     ))}
                 </Form>
-                {submitted && <p>Correct answer: {question.options[question.answer]}</p>}
+                {submitted && <p style={{color: 'blue'}}>Correct answer: {question.options[question.answer]}</p>}
             </div>
         ));
     };
