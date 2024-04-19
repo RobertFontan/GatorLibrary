@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { OpenAI } = require('openai');
+const axios = require('axios');
 
 
 const { supabase } = require('./supabaseClient');
@@ -12,16 +12,50 @@ app.use(cors()); // Allows requests from your frontend
 require('dotenv').config();
 //console.log("API Key: ", process.env.OPENAI_API_KEY);
 
-// const configuration = new Configuration({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const {OpenAI}= require ('openai');
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY // This is also the default, can be omitted
+});
+
+
 
 // universal error catcher
+
+
 app.use((err, req, res, next) => {
   console.error(err.stack)
   res.status(500).send('Something broke!')
 })
+
+const fetchTranscriptData = async (videoId) => {
+  console.log('fetching transcript data')
+  const options = {
+    method: 'GET',
+    url: 'https://youtube-captions.p.rapidapi.com/onlycaption',
+    params: {
+      videoId: videoId
+    },
+    headers: {
+      'X-RapidAPI-Key': '3bbf868d53msh78af357de335f9ap1536a6jsn20da07fcbe43',
+      'X-RapidAPI-Host': 'youtube-captions.p.rapidapi.com'
+    }
+  };
+  // const options = {
+  //   method: 'GET',
+  //   url: 'https://youtube-captions.p.rapidapi.com/create-transcript',
+  //   params: {
+  //     videoUrl: 'https://www.youtube.com/watch?v=' + videoId
+  //   },
+  //   headers: {
+  //     'X-RapidAPI-Key': '3bbf868d53msh78af357de335f9ap1536a6jsn20da07fcbe43',
+  //     'X-RapidAPI-Host': 'youtube-captions.p.rapidapi.com'
+  //   }
+  // };
+
+  const response = await axios.request(options);
+  return response
+}
 
 
 app.post('/generate-questions', async (req, res) => {
@@ -65,14 +99,20 @@ app.post('/generate-questions', async (req, res) => {
         transcript = transcriptData.transcript
       }
       else {
-        console.log('error', error)
-        res.status(500).send('Error generating transcript'); 
+        console.log('No transcript in table', error)
+
+        const response = await fetchTranscriptData(videoID)
+        console.log('response', response.data)
         
+        transcript = response.data
+
       }
+      console.log('transcript', transcript)
       const systemMessage = 'Generate a JSON list of multiple-choice questions with four options (A, B, C, D) and an answer property with the correct choice. Using the following content:'
       // make JSON 
 
       // A) , B) 
+      
       const completion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
@@ -91,14 +131,8 @@ app.post('/generate-questions', async (req, res) => {
         frequency_penalty: 0,
         presence_penalty: 0,
       });
-      console.log('DATA FROM AI', completion)
-      //res.json({ summary: completion.choices[0].message.content });
 
-
-      //const jsonString = completion.choices[0].message.content;
-
-      // Parse the JSON string to a JavaScript object
-
+      
       const jsonString = completion.choices[0].message.content.replace(/```json\n|```/g, '').trim();
 
       let questions;
@@ -121,7 +155,6 @@ app.post('/generate-questions', async (req, res) => {
           content: questions
         }])
         .select()
-      // console.log('data', newData, 'error', err)
 
     }
 
@@ -136,7 +169,7 @@ app.post('/generate-questions', async (req, res) => {
     }
     else {
       console.error('Error inside /generate-questions', err)
-      res.status(500).send('Error generati`ng questions');
+      res.status(500).send('Error generating questions');
     }
   }
 })
