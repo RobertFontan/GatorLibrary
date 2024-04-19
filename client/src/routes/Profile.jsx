@@ -14,6 +14,9 @@ import { useSession } from '../components/SessionContext'
 
 
 
+
+ 
+
 function Profile() {
   const session = useSession()
 
@@ -23,6 +26,7 @@ function Profile() {
   const [todos, setTodos] = useState([])
   const [newTodo, setNewTodo] = useState('')
   const [backgroundImage, setBackgroundImage] = useState(img1); // Default background image
+
 
 
 
@@ -141,6 +145,13 @@ function Profile() {
     }
   };
 
+  const handleButtonClick = (result) => {
+    
+    const { course, video_id } = result;
+    
+    history.push(`/watching/${course}/${video_id}`);
+  };
+
 
 
   /*
@@ -175,16 +186,31 @@ function Profile() {
 
             <div className="transparent-box quizzes-box">
               <div>
-                <h4>Previous Quizzes</h4>
-                <div className="quiz-buttons">
-                  {results && results.map(result => (
-                    <div key={result.video_name} style={{ marginBottom: '5px' }}>
-                      <button onClick={() => handleButtonClick(result)}>
-                        {result.video_name.split(' ').slice(0, 5).join(' ')} - {result.score}
-                      </button>
-                    </div>
-                  ))}
-                </div>
+              <h4>Previous Quizzes</h4>
+              <div className="quiz-buttons">
+  {results &&
+    results.reduce((acc, result) => {
+      // Find existing highest score for this quiz, if any
+      const existingHighest = acc.find(item => item.video_name === result.video_name);
+
+      // If no existing highest score or this score is higher
+      if (!existingHighest || result.score > existingHighest.score) {
+        // Add or replace the highest score for this quiz
+        acc = [...acc.filter(item => item.video_name !== result.video_name), result];
+      }
+
+      return acc;
+    }, []).map(result => (
+      <div key={result.video_name} style={{ marginBottom: '5px' }}>
+        <Link to={`/watching/${result.course}/${result.video_id}`}>
+          <button>
+            {result.video_name.split(' ').slice(0, 5).join(' ')} - {result.score}%
+          </button>
+        </Link>
+      </div>
+    ))}
+</div>
+
 
 
 
