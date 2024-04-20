@@ -275,7 +275,10 @@ function Watching() {
                 Transcript
               </Button>
               <AIComponent onClick={() => setShowQuizModal(true)} />
-              <QuizModal videoId={videoID} showQuizModal={showQuizModal} setShowQuizModal={setShowQuizModal} />
+              <QuizModal
+              videoData = {{videoID, title}}
+              // videoId={videoID}
+               showQuizModal={showQuizModal} setShowQuizModal={setShowQuizModal} />
             </div>
             <div className='sidebar'>{sidebar === 'transcript' ? <Transcript videoId={videoID} /> : <NotesSidebar pRef={playerRef} title={title} videoId={videoID} />}</div>
           </Col>
