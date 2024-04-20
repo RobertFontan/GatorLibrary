@@ -69,11 +69,15 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoData }) => {
             }
 
             if (data && data.content) {
-                if (typeof data.content === 'string') {
-                    setQuizData(JSON.parse(data.content));
-                } else {
+                console.log('quiz data', data.content)
+                if(data.content.questions){
+                    setQuizData(data.content.questions);
+                }
+                else {
                     setQuizData(data.content);
                 }
+
+
             } else {
                 // getting transcript
                 console.log('getting transcript')
@@ -89,7 +93,11 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoData }) => {
                 }
                 if (typeof response.data.summary === 'string') {
                     setQuizData(JSON.parse(response.data.summary));
+                    console.log('quiz data 1', response.data.summary)
+
                 } else {
+                    console.log('quiz data 2', response.data.summary)
+
                     setQuizData(response.data.summary);
                 }
             }
@@ -147,6 +155,9 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoData }) => {
         if (!quizData || quizData.length === 0) {
             return <p>Loading questions...</p>;
         }
+
+        
+        console.log('render quiz', quizData)
         return quizData.map((question, index) => (
             <div key={index} style={{ paddingTop: index !== 0 ? '10px' : '0' }}>
                 <p>{question.question}</p>
