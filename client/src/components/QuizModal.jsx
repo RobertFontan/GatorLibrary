@@ -16,6 +16,45 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoData }) => {
     const [submitted, setSubmitted] = useState(false);
     const [score, setScore] = useState(null);
 
+    const fetchTranscriptData = async (videoId) => {
+        console.log('fetching transcript data')
+        const options = {
+            method: 'GET',
+            url: 'https://youtube-captions.p.rapidapi.com/onlycaption',
+            params: {
+                videoId: videoId
+            },
+            headers: {
+                'X-RapidAPI-Key': '3bbf868d53msh78af357de335f9ap1536a6jsn20da07fcbe43',
+                'X-RapidAPI-Host': 'youtube-captions.p.rapidapi.com'
+            }
+        };
+
+        const response = await axios.request(options);
+        //setTranscript(response.data) // text transcript
+
+        const newInfo = response.data;
+
+        const { data, error } = await supabase
+            .from('notes')
+            .upsert({ videoId: videoId, transcript: newInfo })
+            .eq('profile_id', session.user.id)
+
+
+        if (data) {
+            console.log('update successful data inserted', data)
+        }
+        if (error) {
+            console.log('update error', error)
+        }
+        console.log('update done')
+
+        return response.data;
+    }
+
+
+
+
     useEffect(() => {
         async function fetchQuestions() {
 
@@ -36,9 +75,14 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoData }) => {
                     setQuizData(data.content);
                 }
             } else {
+                // getting transcript
                 console.log('getting transcript')
                 const videoID = videoData.videoID;
-                const response = await axios.post('http://localhost:5000/generate-questions', { videoID });
+
+
+                const transcript = await fetchTranscriptData(videoID);
+
+                const response = await axios.post('http://localhost:5000/generate-questions', { videoID, transcript  });
                 if (!response.data || !response.data.summary) {
                     console.error('Backup API returned no data');
                     throw new Error('No data received from backup questions generator.');
