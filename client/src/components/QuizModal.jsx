@@ -4,12 +4,12 @@ import axios from 'axios';
 
 import supabase from '../config/supabaseClient';
 import { useSession } from '../components/SessionContext';
+import './QuizModal.css'
 
 
 const QuizModal = ({ showQuizModal, setShowQuizModal, videoData }) => {
 
     const session = useSession()
-
 
     const [quizData, setQuizData] = useState([]);
     const [userAnswers, setUserAnswers] = useState({});
@@ -102,7 +102,10 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoData }) => {
 
 
     const handleOptionChange = (questionIndex, option) => {
-        setUserAnswers(prev => ({ ...prev, [questionIndex]: option }));
+        setUserAnswers(prev => ({
+            ...prev,
+            [questionIndex]: option 
+        }));
     };
 
     const handleSubmit = async () => {
@@ -145,23 +148,24 @@ const QuizModal = ({ showQuizModal, setShowQuizModal, videoData }) => {
             return <p>Loading questions...</p>;
         }
         return quizData.map((question, index) => (
-            <div key={index}>
+            <div key={index} style={{ paddingTop: index !== 0 ? '10px' : '0' }}>
                 <p>{question.question}</p>
                 <Form>
                     {Object.entries(question.options).map(([key, value]) => (
-                        <Form.Check
-                            key={key}
-                            type="radio"
-                            name={`question-${index}`}
-                            id={`${index}-${key}`}
-                            label={`${key}: ${value}`}
-                            onChange={() => handleOptionChange(index, key)}
-                            checked={userAnswers[index] === key}
-                            disabled={submitted}
-                        />
+                        <Form.Check 
+                        key={key}
+                        className="custom-radio"
+                        type="radio"
+                        name={`question-${index}`}
+                        id={`${index}-${key}`}
+                        label={key + ": " + value}
+                        onChange={() => handleOptionChange(index, key)}
+                        checked={userAnswers[index] === key}
+                        disabled={submitted}
+                   />                     
                     ))}
                 </Form>
-                {submitted && <p>Correct answer: {question.options[question.answer]}</p>}
+                {submitted && <p style={{color: 'blue'}}>Correct answer: {question.options[question.answer]}</p>}
             </div>
         ));
     };
